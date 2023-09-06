@@ -1,61 +1,85 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-import { ArrowRightOnRectangleIcon, MagnifyingGlassIcon, BellIcon } from "@heroicons/react/24/outline";
+import { Button, Chip, Link, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Spinner } from "@nextui-org/react";
+import { useState } from "react";
+import { GlobalConfig } from "~/config/GlobalConfig";
+import Logo from "~/ui/Logo"
+import { api } from "~/utils/api";
+
+function classNames(...classes: string[]) {
+    return classes.filter(Boolean).join(' ')
+}
 
 const NavBar = () => {
-    return (
-        <header>
-            <div className="navbar bg-base-100 shadow-2xl rounded-b-3xl">
-                <div className="navbar-start">
-                    <div className="dropdown">
-                        <label tabIndex={0} className="btn btn-ghost lg:hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
-                        </label>
-                        <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-                            <li><a>Item 1</a></li>
-                            <li>
-                                <a>Parent</a>
-                                <ul className="p-2">
-                                    <li><a>Submenu 1</a></li>
-                                    <li><a>Submenu 2</a></li>
-                                </ul>
-                            </li>
-                            <li><a>Item 3</a></li>
-                        </ul>
-                    </div>
-                    <a className="btn btn-ghost normal-case text-xl">daisyUI</a>
-                </div>
-                <div className="navbar-center hidden lg:flex">
-                    <ul className="menu menu-horizontal px-1">
-                        <li><a>Item 1</a></li>
-                        <li tabIndex={0}>
-                            <details>
-                                <summary>Parent</summary>
-                                <ul className="p-2">
-                                    <li><a>Submenu 1</a></li>
-                                    <li><a>Submenu 2</a></li>
-                                </ul>
-                            </details>
-                        </li>
-                        <li><a>Item 3</a></li>
-                    </ul>
-                </div>
-                < div className="navbar-end" >
-                    <button className="btn btn-ghost btn-circle">
-                        <MagnifyingGlassIcon className="h-5 w-5" />
-                    </button>
-                    <button className="btn btn-ghost btn-circle">
-                        <div className="indicator">
-                            <BellIcon className="h-5 w-5" />
-                            <span className="badge badge-xs badge-primary indicator-item"></span>
-                        </div>
-                    </button>
-                    <button className="btn btn-ghost btn-circle" >
-                        <ArrowRightOnRectangleIcon className="h-5 w-5" />
-                    </button>
-                </ div>
-            </div >
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { data, isLoading, isError, isSuccess } = api.Auth.me.useQuery(undefined, GlobalConfig.tanstackOption);
 
-        </header >
+
+    return (
+        <Navbar shouldHideOnScroll onMenuOpenChange={setIsMenuOpen} isBordered >
+            <NavbarContent>
+                <NavbarMenuToggle
+                    aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                    className="sm:hidden"
+                />
+                <NavbarBrand>
+                    <Logo />
+                    <div>
+                        <p className="font-bold text-inherit">VUVU</p>
+                        <p className="font-bold text-inherit">WEDDING</p>
+                    </div>
+                </NavbarBrand>
+            </NavbarContent>
+            <NavbarContent className="hidden sm:flex gap-4" justify="center">
+                {GlobalConfig.menuItems.map((item, index) => (
+                    <NavbarItem key={`${item.label}-${index}`}>
+                        <Link
+
+                            className={classNames(item.current? "text-orange-500 dark:text-green-300 " : "text-current","w-full")}
+                            href={item.href}
+                            size="lg"
+                        >
+                            {item.label}
+                        </Link>
+                    </NavbarItem>
+                ))}
+            </NavbarContent>
+            <NavbarContent justify="end">
+                {(isLoading || isError) && <Spinner size="lg" />}
+                {
+                    isSuccess && !data?.username ?
+                        <NavbarItem className="lg:flex">
+                            <Link href="#">Login</Link>
+                        </NavbarItem> :
+                        <NavbarItem className="lg:flex">
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button variant="bordered" > {data?.username} </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu aria-label="Static Actions">
+                                    <DropdownItem key="profiles">Profiles</DropdownItem>
+                                    <DropdownItem key="logout" className="text-danger" color="danger">
+                                        Logout
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </NavbarItem>
+                }
+            </NavbarContent>
+            <NavbarMenu>
+                {GlobalConfig.menuItems.map((item, index) => (
+                    <NavbarMenuItem key={`${item.label}-${index}`}>
+                        <Link
+                            color={item.current ? "primary" : "foreground"}
+                            className="w-full"
+                            href={item.href}
+                            size="sm"
+                        >
+                            <item.icon className="w-5 h-5" />
+                            {item.label}
+                        </Link>
+                    </NavbarMenuItem>
+                ))}
+            </NavbarMenu>
+        </Navbar>
     )
 }
 
