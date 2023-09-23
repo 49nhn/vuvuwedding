@@ -22,14 +22,107 @@ model User {
   sessions        Session[]
   @@map("users")
 }
- 
-model Session {
-  id              String      @id @default(auto()) @map("_id") @db.ObjectId
-  sessionToken    String      @unique
-  userId          String      @db.ObjectId
-  expires         DateTime    @map("expiresAt")
-  user            User        @relation(fields: [userId], references: [id])
-  @@map("sessions")
+
+model Role {
+    id          String       @id @default(auto()) @map("_id") @db.ObjectId
+    name        String       @unique
+    Permissions Permission[]
+    User        User[]
+}
+
+model Permission {
+    id                String              @id @default(auto()) @map("_id") @db.ObjectId
+    name              String              @unique
+    Role              Role                @relation(fields: [roleId], references: [id])
+    roleId            String              @db.ObjectId
+    ServicePermission ServicePermission[]
+}
+
+model Service {
+    id                String              @id @default(auto()) @map("_id") @db.ObjectId
+    name              String              @unique
+    createdAt         DateTime            @default(now())
+    updatedAt         DateTime            @updatedAt
+    deletedAt         DateTime?
+    isDeleted         Boolean             @default(false)
+    ServicePermission ServicePermission[]
+}
+
+model ServicePermission {
+    id           String     @id @default(auto()) @map("_id") @db.ObjectId
+    service      Service    @relation(fields: [serviceId], references: [id])
+    serviceId    String     @db.ObjectId
+    permission   Permission @relation(fields: [permissionId], references: [id])
+    permissionId String     @db.ObjectId
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
+    deletedAt    DateTime?
+    isDeleted    Boolean    @default(false)
+}
+
+model Show {
+    id             String           @id @default(auto()) @map("_id") @db.ObjectId
+    name           String
+    createdAt      DateTime         @default(now())
+    updatedAt      DateTime         @updatedAt
+    deletedAt      DateTime?
+    isDeleted      Boolean          @default(false)
+    ShowDecoration ShowDecoration[]
+    Photo          Photo[]
+    MakeUp         MakeUp[]
+    WeddingFruit   WeddingFruit[]
+}
+
+model Decoration {
+    id             String           @id @default(auto()) @map("_id") @db.ObjectId
+    name           String
+    ShowDecoration ShowDecoration[]
+}
+
+model ShowDecoration {
+    id           String     @id @default(auto()) @map("_id") @db.ObjectId
+    show         Show       @relation(fields: [showId], references: [id])
+    showId       String     @db.ObjectId
+    decoration   Decoration @relation(fields: [decorationId], references: [id])
+    decorationId String     @db.ObjectId
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
+    deletedAt    DateTime?
+    isDeleted    Boolean    @default(false)
+}
+
+model Photo {
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    url       String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+    isDeleted Boolean   @default(false)
+    Show      Show      @relation(fields: [showId], references: [id])
+    showId    String    @db.ObjectId
+}
+
+model MakeUp {
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+    isDeleted Boolean   @default(false)
+    Show      Show      @relation(fields: [showId], references: [id])
+    showId    String    @db.ObjectId
+}
+
+model WeddingFruit {
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+    isDeleted Boolean   @default(false)
+    Show      Show      @relation(fields: [showId], references: [id])
+    showId    String    @db.ObjectId
 }
  
 model VerificationToken {
