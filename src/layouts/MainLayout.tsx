@@ -6,6 +6,7 @@ import Head from "next/head";
 import { GlobalConfig } from "~/config/GlobalConfig";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
+import Sidebar from "~/components/SideBar";
 
 type Layout = PropsWithChildren & { title?: string }
 
@@ -26,6 +27,7 @@ const MainLayout = ({ children, title = "" }: Layout) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavBar />
+      <Sidebar />
       <main className=" flex min-h-screen flex-col items-center justify-center">
         {children}
       </main>

@@ -123,3 +123,13 @@ model WeddingFruit {
     Show      Show      @relation(fields: [showId], references: [id])
     showId    String    @db.ObjectId
 }
+
+model VerificationToken {
+    id         String   @id @default(auto()) @map("_id") @db.ObjectId
+    identifier String
+    token      String   @unique
+    expires    DateTime @map("expiresAt")
+
+    @@unique([identifier, token])
+    @@map("verification_tokens")
+}

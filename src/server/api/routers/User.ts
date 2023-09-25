@@ -58,12 +58,16 @@ export const userRouter = createTRPCRouter({
         data: {
           username: input.username,
           password: hashedPassword,
+          roles: { // add a default value for roles
+            connect: { name: 'default' }
+          }
         },
       })) as unknown as User;
       return {
         message: 'Success',
       };
     }),
+
 
 });
 
