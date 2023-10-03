@@ -11,15 +11,17 @@ datasource db {
 }
 
 model User {
-    id        String    @id @default(auto()) @map("_id") @db.ObjectId
-    username  String    @unique
+    id        String     @id @default(auto()) @map("_id") @db.ObjectId
+    username  String     @unique
+    phone     String
     password  String
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
+    createdAt DateTime   @default(now())
     deletedAt DateTime?
-    isDeleted Boolean   @default(false)
-    roles     Role      @relation(fields: [roleId], references: [id])
-    roleId    String    @db.ObjectId
+    isDeleted Boolean    @default(false)
+    roles     Role?      @relation(fields: [roleId], references: [id])
+    roleId    String?    @db.ObjectId
+    employee  Employee[]
+    salesman  Salesman?
 }
 
 model Role {
@@ -30,106 +32,105 @@ model Role {
 }
 
 model Permission {
-    id                String              @id @default(auto()) @map("_id") @db.ObjectId
-    name              String              @unique
-    Role              Role                @relation(fields: [roleId], references: [id])
-    roleId            String              @db.ObjectId
-    ServicePermission ServicePermission[]
+    id     String @id @default(auto()) @map("_id") @db.ObjectId
+    name   String @unique
+    Role   Role   @relation(fields: [roleId], references: [id])
+    roleId String @db.ObjectId
 }
 
-model Service {
-    id                String              @id @default(auto()) @map("_id") @db.ObjectId
-    name              String              @unique
-    createdAt         DateTime            @default(now())
-    updatedAt         DateTime            @updatedAt
-    deletedAt         DateTime?
-    isDeleted         Boolean             @default(false)
-    ServicePermission ServicePermission[]
+model Employee {
+    id             String        @id @default(auto()) @map("_id") @db.ObjectId
+    name           String
+    createdAt      DateTime      @default(now())
+    updatedAt      DateTime      @updatedAt
+    deletedAt      DateTime?
+    isDeleted      Boolean       @default(false)
+    Decoration     Decoration?   @relation(fields: [decorationId], references: [id])
+    decorationId   String?       @db.ObjectId
+    Photo          Photo?        @relation(fields: [photoId], references: [id])
+    photoId        String?       @db.ObjectId
+    MakeUp         MakeUp?       @relation(fields: [makeUpId], references: [id])
+    makeUpId       String?       @db.ObjectId
+    WeddingFruit   WeddingFruit? @relation(fields: [weddingFruitId], references: [id])
+    weddingFruitId String?       @db.ObjectId
+    User           User?         @relation(fields: [userId], references: [id])
+    userId         String?       @db.ObjectId
 }
 
-model ServicePermission {
-    id           String     @id @default(auto()) @map("_id") @db.ObjectId
-    service      Service    @relation(fields: [serviceId], references: [id])
-    serviceId    String     @db.ObjectId
-    permission   Permission @relation(fields: [permissionId], references: [id])
-    permissionId String     @db.ObjectId
-    createdAt    DateTime   @default(now())
-    updatedAt    DateTime   @updatedAt
-    deletedAt    DateTime?
-    isDeleted    Boolean    @default(false)
+model Salesman {
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+    isDeleted Boolean   @default(false)
+    user      User      @relation(fields: [userId], references: [id])
+    userId    String    @unique @db.ObjectId
+    Show      Show[]
 }
 
 model Show {
-    id             String           @id @default(auto()) @map("_id") @db.ObjectId
-    name           String
-    createdAt      DateTime         @default(now())
-    updatedAt      DateTime         @updatedAt
-    deletedAt      DateTime?
-    isDeleted      Boolean          @default(false)
-    ShowDecoration ShowDecoration[]
-    Photo          Photo[]
-    MakeUp         MakeUp[]
-    WeddingFruit   WeddingFruit[]
+    id           String         @id @default(auto()) @map("_id") @db.ObjectId
+    name         String
+    status       String         @default("pending")
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    deletedAt    DateTime?
+    isDeleted    Boolean        @default(false)
+    Decoration   Decoration[]
+    Photo        Photo[]
+    MakeUp       MakeUp[]
+    WeddingFruit WeddingFruit[]
+    Salesman     Salesman?      @relation(fields: [salesmanId], references: [id])
+    salesmanId   String?        @db.ObjectId
+    Invoice      Invoice?
+}
+
+model Invoice {
+    id     String   @id @default(auto()) @map("_id") @db.ObjectId
+    name   String
+    desc   String
+    date   DateTime
+    Show   Show     @relation(fields: [showId], references: [id])
+    showId String   @unique @db.ObjectId
 }
 
 model Decoration {
-    id             String           @id @default(auto()) @map("_id") @db.ObjectId
-    name           String
-    ShowDecoration ShowDecoration[]
-}
-
-model ShowDecoration {
-    id           String     @id @default(auto()) @map("_id") @db.ObjectId
-    show         Show       @relation(fields: [showId], references: [id])
-    showId       String     @db.ObjectId
-    decoration   Decoration @relation(fields: [decorationId], references: [id])
-    decorationId String     @db.ObjectId
-    createdAt    DateTime   @default(now())
-    updatedAt    DateTime   @updatedAt
-    deletedAt    DateTime?
-    isDeleted    Boolean    @default(false)
+    id       String     @id @default(auto()) @map("_id") @db.ObjectId
+    name     String
+    desc     String
+    Show     Show       @relation(fields: [showId], references: [id])
+    showId   String     @db.ObjectId
+    employee Employee[]
 }
 
 model Photo {
-    id        String    @id @default(auto()) @map("_id") @db.ObjectId
-    name      String
-    url       String
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-    isDeleted Boolean   @default(false)
-    Show      Show      @relation(fields: [showId], references: [id])
-    showId    String    @db.ObjectId
+    id       String     @id @default(auto()) @map("_id") @db.ObjectId
+    name     String
+    desc     String
+    url      String
+    date     DateTime
+    Show     Show       @relation(fields: [showId], references: [id])
+    showId   String     @db.ObjectId
+    employee Employee[]
 }
 
 model MakeUp {
-    id        String    @id @default(auto()) @map("_id") @db.ObjectId
-    name      String
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-    isDeleted Boolean   @default(false)
-    Show      Show      @relation(fields: [showId], references: [id])
-    showId    String    @db.ObjectId
+    id       String     @id @default(auto()) @map("_id") @db.ObjectId
+    name     String
+    desc     String
+    date     DateTime
+    Show     Show       @relation(fields: [showId], references: [id])
+    showId   String     @db.ObjectId
+    employee Employee[]
 }
 
 model WeddingFruit {
-    id        String    @id @default(auto()) @map("_id") @db.ObjectId
-    name      String
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
-    isDeleted Boolean   @default(false)
-    Show      Show      @relation(fields: [showId], references: [id])
-    showId    String    @db.ObjectId
-}
-
-model VerificationToken {
-    id         String   @id @default(auto()) @map("_id") @db.ObjectId
-    identifier String
-    token      String   @unique
-    expires    DateTime @map("expiresAt")
-
-    @@unique([identifier, token])
-    @@map("verification_tokens")
+    id       String     @id @default(auto()) @map("_id") @db.ObjectId
+    name     String
+    desc     String
+    date     DateTime
+    Show     Show       @relation(fields: [showId], references: [id])
+    showId   String     @db.ObjectId
+    employee Employee[]
 }

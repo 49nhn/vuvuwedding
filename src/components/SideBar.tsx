@@ -2,43 +2,122 @@ import Link from 'next/link';
 import React, { useState } from 'react'
 import Logo from '~/ui/Logo';
 import { GlobalConfig } from "~/config/GlobalConfig";
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Spinner } from '@nextui-org/react';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Listbox, ListboxItem, Spinner } from '@nextui-org/react';
 import { api } from '~/utils/api';
+import { Bars3CenterLeftIcon, UserIcon, NewspaperIcon, CameraIcon, PaintBrushIcon, BuildingOffice2Icon, UserGroupIcon } from "@heroicons/react/20/solid"
 
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
+
+<style>
+
+    {/* .sidebarShow{
+        width: 64px;
+    } */}
+
+
+
+
+</style>
 const Sidebar = () => {
     const { data, isLoading, isError, isSuccess } = api.Auth.me.useQuery(undefined, GlobalConfig.tanstackOption);
     const logout = api.Auth.logout.useMutation();
+    const [isMenuOpen, setIsMenuOpen] = useState(true)
+
     const handleLogout = () => {
         console.log('logout');
         logout.mutate();
         logout && setTimeout(() => window.location.assign('/auth/login'), 2e3);
     }
+
+    const handleMenuOpen = () => {
+        setIsMenuOpen(!isMenuOpen)
+        console.log(isMenuOpen);
+
+    }
     return (
-        <div className='flex flex-col border-small px-1 py-2 drop-shadow-md rounded-small border-default-200 dark:border-default-100'>
-            <div className='flex justify-between'>
-                <Link href="/" className="flex items-center gap-2 text-current ">
-                    <Logo />
-                </Link>
+        <div id='' className={classNames(isMenuOpen ? "w-64" : "w-16 ", "h-screen bg-content1 dark:bg-content flex flex-col  shadow-small rounded-medium  ")}>
+            <Listbox
+                aria-label="User Menu"
+                onAction={(key) => console.log(key)}
+                className="p-0 gap-0 divide-y divide-default-300/50 dark:divide-default-100/80 bg-content1 overflow-visible h-screen shadow-small rounded-medium "
+                itemClasses={{
+                    base: "px-3 py-6 first:rounded-t-medium last:rounded-b-medium rounded-none gap-3 h-12 data-[hover=true]:bg-default-100/80",
+                }}
+            >
+                <ListboxItem key="" className='h-34 z-10 '>
+                    <div className='static '>
+                        <button className={classNames(isMenuOpen ? 'right-5' : 'w-14 -right-20', 'shadow-small rounded-medium absolute w-12 p-2 z-19 hover:bg-blue-300')} onClick={handleMenuOpen}>
+                            <Bars3CenterLeftIcon />
+                        </button>
+                    </div>
+                    <Link href={"/"} className='flex items-center'>
+                        <Logo />
+                        {isMenuOpen &&
+                            <div className=''>
+                                <p className="font-bold text-lg text-inherit">VUVU</p>
+                                <p className="font-bold text-lg text-inherit">WEDDING</p>
+                            </div>}
+                    </Link>
+                </ListboxItem>
+                <ListboxItem key="Dashboard">
+                    <Link href={"/"} className={classNames(isMenuOpen ? '' : 'justify-center', 'flex items-center  gap-x-2')}>
+                        <NewspaperIcon className='w-8' />  {isMenuOpen && <span>Dashboard</span>}
+                    </Link>
+                </ListboxItem>
+                <ListboxItem key="Decor">
+                    <Link href={"/"} className={classNames(isMenuOpen ? '' : 'justify-center', 'flex items-center  gap-x-2')}>
+                        <BuildingOffice2Icon className='w-8' />  {isMenuOpen && <span>Decor</span>}
+                    </Link>
+                </ListboxItem>
+                <ListboxItem key="Photo">
+                    <Link href={"/"} className={classNames(isMenuOpen ? '' : 'justify-center', 'flex items-center  gap-x-2')}>
+                        <CameraIcon className='w-8' />  {isMenuOpen && <span>Photo</span>}
+                    </Link>
+                </ListboxItem>
+                <ListboxItem key="MakeUp">
+                    <Link href={"/"} className={classNames(isMenuOpen ? '' : 'justify-center', 'flex items-center  gap-x-2')}>
+                        <PaintBrushIcon className='w-8' />  {isMenuOpen && <span>MakeUp</span>}
+                    </Link>
+                </ListboxItem>
+                <ListboxItem key="User">
+                    <Link href={"/"} className={classNames(isMenuOpen ? '' : 'justify-center', 'flex items-center  gap-x-2')}>
+                        <UserGroupIcon className='w-8' />  {isMenuOpen && <span>User</span>}
+                    </Link>
+                </ListboxItem>
+                <ListboxItem key="Manager">
+                    <Link href={"/"} className={classNames(isMenuOpen ? '' : 'justify-center', 'flex items-center  gap-x-2')}>
+                        <PaintBrushIcon className='w-8' />  {isMenuOpen && <span>Manager</span>}
+                    </Link>
+                </ListboxItem>
+
+            </Listbox>
+            <div className='absolute bottom-2 left-2 shadow-small rounded-medium'>
+                {(isLoading || isError) && <Spinner size="lg" />}
+                {isSuccess && !data?.username ?
+                    <div className="lg:flex">
+                        <Link href="#">Login</Link>
+                    </div> :
+                    <div className="lg:flex">
+                        <Dropdown>
+                            <DropdownTrigger className='data-[hover=true]:bg-default-100/80'>
+                                
+                                <UserIcon className='w-12 p-2' />
+                            </DropdownTrigger>
+                            <DropdownMenu aria-label="Static Actions">
+                                <DropdownItem key="username" variant="bordered" > {data?.username} </DropdownItem>
+                                <DropdownItem key="profiles">Profiles</DropdownItem>
+                                <DropdownItem key="logout" className="text-danger" color="danger" onClick={handleLogout}>
+                                    Logout
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+                }
             </div>
-
-            <ul className="list-inside pt-6">
-                {GlobalConfig.menuItems.map((item) => (
-                    <li key={item.label} className="list-item hover:bg-slate-700  px-3 py-2 ">
-                        <Link
-                            className={classNames(item.current ? "text-orange-500 dark:text-green-300 " : "text-current", "w-full ")}
-                            href={item.href}
-                        >
-                            {item.label}
-                        </Link>
-                    </li>
-                ))}
-            </ul>
-
-        </div>
+        </div >
     )
 }
 

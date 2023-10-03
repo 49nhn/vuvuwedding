@@ -26,10 +26,17 @@ const MainLayout = ({ children, title = "" }: Layout) => {
         <title>{pageTitle}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <NavBar />
-      <Sidebar />
-      <main className=" flex min-h-screen flex-col items-center justify-center">
-        {children}
+      {/* <NavBar /> */}
+      <main className="flex gap-3">
+        <Sidebar />
+        <div className="h-screen bg-content1 shadow-small rounded-medium  dark:bg-content mx-auto flex flex-col w-full">
+          <h1 className="m-4 text-sky-400 text-xl font-mono">
+            {title}
+          </h1>
+          <div className=" items-start mx-5 ">
+            {children}
+          </div>
+        </div>
       </main>
       <ChangeTheme />
     </>
