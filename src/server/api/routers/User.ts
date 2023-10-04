@@ -24,10 +24,11 @@ export const userRouter = createTRPCRouter({
       const users = await ctx.prisma.user.findMany(
         {
           skip: page * itemPerPage,
-          take: itemPerPage
+          take: itemPerPage,
+          include: { roles: true },
         });
       return {
-        data: users.map(e => ({ ...e, password: "Secure" })),
+        data: users.map(e => ({ ...e, password: "Secure", createdAt: e.createdAt.toLocaleDateString() })),
         total: await ctx.prisma.user.count(),
         itemPerPage,
       };

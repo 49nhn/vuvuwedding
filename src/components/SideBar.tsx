@@ -2,25 +2,14 @@ import Link from 'next/link';
 import React, { useState } from 'react'
 import Logo from '~/ui/Logo';
 import { GlobalConfig } from "~/config/GlobalConfig";
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Listbox, ListboxItem, Spinner } from '@nextui-org/react';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Listbox, ListboxItem, Spinner } from '@nextui-org/react';
 import { api } from '~/utils/api';
-import { Bars3CenterLeftIcon, UserIcon, NewspaperIcon, CameraIcon, PaintBrushIcon, BuildingOffice2Icon, UserGroupIcon } from "@heroicons/react/20/solid"
+import { UserIcon, NewspaperIcon, CameraIcon, PaintBrushIcon, BuildingOffice2Icon, UserGroupIcon } from "@heroicons/react/20/solid"
 
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
-
-<style>
-
-    {/* .sidebarShow{
-        width: 64px;
-    } */}
-
-
-
-
-</style>
 const Sidebar = () => {
     const { data, isLoading, isError, isSuccess } = api.Auth.me.useQuery(undefined, GlobalConfig.tanstackOption);
     const logout = api.Auth.logout.useMutation();
@@ -43,16 +32,8 @@ const Sidebar = () => {
                 aria-label="User Menu"
                 onAction={(key) => console.log(key)}
                 className="p-0 gap-0 divide-y divide-default-300/50 dark:divide-default-100/80 bg-content1 overflow-visible h-screen shadow-small rounded-medium "
-                itemClasses={{
-                    base: "px-3 py-6 first:rounded-t-medium last:rounded-b-medium rounded-none gap-3 h-12 data-[hover=true]:bg-default-100/80",
-                }}
-            >
-                <ListboxItem key="" className='h-34 z-10 '>
-                    <div className='static '>
-                        <button className={classNames(isMenuOpen ? 'right-5' : 'w-14 -right-20', 'shadow-small rounded-medium absolute w-12 p-2 z-19 hover:bg-blue-300')} onClick={handleMenuOpen}>
-                            <Bars3CenterLeftIcon />
-                        </button>
-                    </div>
+                itemClasses={{ base: "px-3 py-6 first:rounded-t-medium last:rounded-b-medium rounded-none gap-3 h-12 data-[hover=true]:bg-default-100/80" }}>
+                <ListboxItem key="" className='h-34 z-10 ' onClick={handleMenuOpen} >
                     <Link href={"/"} className='flex items-center'>
                         <Logo />
                         {isMenuOpen &&
@@ -83,7 +64,7 @@ const Sidebar = () => {
                     </Link>
                 </ListboxItem>
                 <ListboxItem key="User">
-                    <Link href={"/"} className={classNames(isMenuOpen ? '' : 'justify-center', 'flex items-center  gap-x-2')}>
+                    <Link href={"/user"} className={classNames(isMenuOpen ? '' : 'justify-center', 'flex items-center  gap-x-2')}>
                         <UserGroupIcon className='w-8' />  {isMenuOpen && <span>User</span>}
                     </Link>
                 </ListboxItem>
@@ -92,7 +73,6 @@ const Sidebar = () => {
                         <PaintBrushIcon className='w-8' />  {isMenuOpen && <span>Manager</span>}
                     </Link>
                 </ListboxItem>
-
             </Listbox>
             <div className='absolute bottom-2 left-2 shadow-small rounded-medium'>
                 {(isLoading || isError) && <Spinner size="lg" />}
@@ -103,7 +83,7 @@ const Sidebar = () => {
                     <div className="lg:flex">
                         <Dropdown>
                             <DropdownTrigger className='data-[hover=true]:bg-default-100/80'>
-                                
+
                                 <UserIcon className='w-12 p-2' />
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Static Actions">

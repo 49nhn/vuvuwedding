@@ -19,6 +19,7 @@ export const GlobalConfig = {
         refetchOnMount: false,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
+        keepPreviousData: true,
         retry: false,
     }
 };

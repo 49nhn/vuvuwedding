@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, type PropsWithChildren } from "react";
-import NavBar from "~/components/NavBar";
 import ChangeTheme from "~/ui/ChangeTheme";
 import Head from "next/head";
 import { GlobalConfig } from "~/config/GlobalConfig";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import Sidebar from "~/components/SideBar";
+import TitlePage from "~/ui/Title";
 
 type Layout = PropsWithChildren & { title?: string }
 
@@ -26,14 +26,11 @@ const MainLayout = ({ children, title = "" }: Layout) => {
         <title>{pageTitle}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {/* <NavBar /> */}
       <main className="flex gap-3">
         <Sidebar />
-        <div className="h-screen bg-content1 shadow-small rounded-medium  dark:bg-content mx-auto flex flex-col w-full">
-          <h1 className="m-4 text-sky-400 text-xl font-mono">
-            {title}
-          </h1>
-          <div className=" items-start mx-5 ">
+        <div className="h-screen flex flex-col gap-y-3 w-full">
+          <TitlePage titleTop={title} />
+          <div className=" p-6 bg-content1 shadow-small rounded-medium w-full h-full  dark:bg-content mx-auto overflow-y-scroll ">
             {children}
           </div>
         </div>
