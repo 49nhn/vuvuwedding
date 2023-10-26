@@ -39,11 +39,21 @@ export const userRouter = createTRPCRouter({
       z.object({
         username: z.string(),
         password: z.string().min(8).max(24),
+        roleId: z.string(),
+        employee: z.object({
+          jobnameId: z.array(z.string()),
+          fullname: z.string(),
+          name: z.string(),
+          phone: z.string().nullable(),
+          email: z.string().nullable(),
+          address: z.string().nullable(),
+          birthDate: z.date().default(new Date()),
+          salary: z.number(),
+          isSalesman: z.boolean(),
+        }).nullable(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log(input);
-
       let user = await ctx.prisma.user.findUnique({
         where: {
           username: input.username,
@@ -59,11 +69,22 @@ export const userRouter = createTRPCRouter({
         data: {
           username: input.username,
           password: hashedPassword,
-          roles: { // add a default value for roles
-            connect: { name: 'default' }
+          roles: {
+            connect: { id: input.roleId }
+          },
+          employees: {
+            create: input.employee ? {
+              ...input.employee,
+              JobNames: {
+                connect: input.employee.jobnameId.map(e => ({ id: e }))
+              },
+              salesmans: {
+                create: input.employee?.isSalesman
+              } || undefined,
+            } : undefined,
           }
         },
-      })) as unknown as User;
+      }));
       return {
         message: 'Success',
       };

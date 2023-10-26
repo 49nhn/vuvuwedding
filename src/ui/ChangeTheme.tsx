@@ -25,9 +25,11 @@ const ChangeTheme = () => {
             else setTheme("light")
         }
         if (theme === "dark") {
-            window.document.documentElement.setAttribute("data-theme", "dark");
+            window.document.documentElement.setAttribute("class", "dark");
+            window.document.documentElement.setAttribute("data-mode", "dark");
         } else {
-            window.document.documentElement.setAttribute("data-theme", "light");
+            window.document.documentElement.setAttribute("class", "light");
+            window.document.documentElement.setAttribute("data-mode", "light");
         }
         localStorage()?.setItem("theme", theme!);
     }, [theme]);

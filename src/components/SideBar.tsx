@@ -24,7 +24,6 @@ const Sidebar = () => {
     const handleMenuOpen = () => {
         setIsMenuOpen(!isMenuOpen)
         console.log(isMenuOpen);
-
     }
     return (
         <div id='' className={classNames(isMenuOpen ? "w-64" : "w-16 ", "h-screen bg-content1 dark:bg-content flex flex-col  shadow-small rounded-medium  ")}>
@@ -34,14 +33,14 @@ const Sidebar = () => {
                 className="p-0 gap-0 divide-y divide-default-300/50 dark:divide-default-100/80 bg-content1 overflow-visible h-screen shadow-small rounded-medium "
                 itemClasses={{ base: "px-3 py-6 first:rounded-t-medium last:rounded-b-medium rounded-none gap-3 h-12 data-[hover=true]:bg-default-100/80" }}>
                 <ListboxItem key="" className='h-34 z-10 ' onClick={handleMenuOpen} >
-                    <Link href={"/"} className='flex items-center'>
+                    <div className='flex items-center'>
                         <Logo />
                         {isMenuOpen &&
                             <div className=''>
                                 <p className="font-bold text-lg text-inherit">VUVU</p>
                                 <p className="font-bold text-lg text-inherit">WEDDING</p>
                             </div>}
-                    </Link>
+                    </div>
                 </ListboxItem>
                 <ListboxItem key="Dashboard">
                     <Link href={"/"} className={classNames(isMenuOpen ? '' : 'justify-center', 'flex items-center  gap-x-2')}>

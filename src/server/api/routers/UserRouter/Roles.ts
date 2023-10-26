@@ -30,17 +30,56 @@ export const roleRouter = createTRPCRouter({
                     id: input.filter?.sort === 1 ? "asc" : "desc",
                 },
                 include: {
-                    User: true
+                    Permissions: true
                 },
             }
             )
-            console.log(roles);
-
             return {
                 data: roles,
                 total: await ctx.prisma.role.count(),
                 itemPerPage,
             };
+        }),
+    create: AuthMiddleware
+        .input(
+            z.object({
+                name: z.string(),
+                permissions: z.array(z.string()).nullable(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const role = await ctx.prisma.role.create({
+                data: {
+                    name: input.name,
+                    Permissions: {
+                        create: input.permissions?.map((id) => ({ Permission: { connect: { id } }, name: '' })),
+                    },
+                },
+            });
+            return role;
+        }),
+    update: AuthMiddleware
+        .input(
+            z.object({
+                id: z.string(),
+                name: z.string(),
+                permissionIds: z.array(z.string()).nullable(),
+
+            })
+    )
+        .query(async ({ ctx, input }) => {
+            const role = await ctx.prisma.role.update({
+                where: {
+                    id: input.id,
+                },
+                data: {
+                    name: input.name,
+                    Permissions: {
+                        set: input.permissionIds?.map((id) => ({ id })),
+                    },
+                },
+            });
+            return role;
         }),
 });
 

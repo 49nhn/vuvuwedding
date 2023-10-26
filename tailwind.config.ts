@@ -10,6 +10,6 @@ export default {
   theme: {
     extend: {},
   },
-  darkMode: "class",
+  darkMode: ['class', '[data-mode="dark"]'],
   plugins: [require("@tailwindcss/typography"), nextui()],
 } satisfies Config;
