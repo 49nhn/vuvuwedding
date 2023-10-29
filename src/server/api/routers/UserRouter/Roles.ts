@@ -13,21 +13,21 @@ export const roleRouter = createTRPCRouter({
                     sort: z.number().nullable(),
                 }).nullable(),
                 itemPerPage: z.number().nullable(),
-            })
+            }).nullable()
         )
         .query(async ({ ctx, input }) => {
-            const page = Number(input.page) - 1 || 0;
-            const itemPerPage = input.itemPerPage ?? 10;
+            const page = Number(input?.page) - 1 || 0;
+            const itemPerPage = input?.itemPerPage ?? 10;
             const roles = await ctx.prisma.role.findMany({
                 where: {
                     name: {
-                        contains: input.filter?.string ?? "",
+                        contains: input?.filter?.string ?? "",
                     },
                 },
                 skip: page * itemPerPage,
                 take: itemPerPage,
                 orderBy: {
-                    id: input.filter?.sort === 1 ? "asc" : "desc",
+                    id: input?.filter?.sort === 1 ? "asc" : "desc",
                 },
                 include: {
                     Permissions: true
@@ -39,6 +39,16 @@ export const roleRouter = createTRPCRouter({
                 total: await ctx.prisma.role.count(),
                 itemPerPage,
             };
+        }),
+    getlistRoleName: AuthMiddleware
+        .query(async ({ ctx }) => {
+            const roles = await ctx.prisma.role.findMany({
+                select: {
+                    id: true,
+                    name: true
+                }
+            })
+            return roles;
         }),
     create: AuthMiddleware
         .input(

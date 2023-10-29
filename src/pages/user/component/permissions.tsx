@@ -1,5 +1,5 @@
 import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/20/solid"
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Tooltip, Button, Card, CardBody, CardHeader, Input, Select, SelectItem, Spinner, Pagination, Checkbox } from "@nextui-org/react"
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, Spinner, Pagination, Checkbox } from "@nextui-org/react"
 import { type ChangeEvent, useMemo, useState } from "react";
 import { GlobalConfig } from "~/config/GlobalConfig";
 import { api } from "~/utils/api";

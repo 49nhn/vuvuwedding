@@ -1,30 +1,26 @@
-import { Button, Input, Pagination, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, getKeyValue, useDisclosure, Modal, ModalContent, ModalBody, ModalHeader, ModalFooter } from '@nextui-org/react';
+import { Button, Input, Pagination, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, getKeyValue, useDisclosure, Modal, ModalContent, ModalBody, ModalHeader, ModalFooter, Select, SelectItem, Selection } from '@nextui-org/react';
 import { GlobalConfig } from '~/config/GlobalConfig';
 import { api } from '~/utils/api';
 import { useMemo, useState } from 'react';
 import { EyeIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon, EyeSlashIcon } from '@heroicons/react/20/solid';
 import InputUI from '~/ui/Input';
+import { string } from 'zod';
 
 const User = () => {
-    {/* z.object({
-                                username: z.string(),
-                                password: z.string().min(8).max(24),
-                                roleId: z.string(),
-                                employee: z.object({
-                                    jobname: z.string(),
-                                    fullname: z.string(),
-                                    name: z.string(),
-                                    phone: z.string().nullable(),
-                                    email: z.string().nullable(),
-                                    address: z.string().nullable(),
-                                    birthDate: z.date().default(new Date()),
-                                    salary: z.number(),
-                                    isSalesman: z.boolean(),
-                                    }).nullable(), */}
+    const roleList = api.Role.getlistRoleName.useQuery();
+    const jobnameList = api.Employee.getJobCategory.useQuery();
+    const addUser = api.User.create.useMutation(GlobalConfig.tanstackOption)
+    const [roleId, setRoleId] = useState("");
+    const [password, setPassword] = useState("");
+    const [jobName, setjobName] = useState<Selection>(new Set([]))
     const username = InputUI({ label: "Username", Invalid: true, placeholder: "Enter your username" });
-    const password = InputUI({ label: "Password", placeholder: "Enter your password", type: "password" });
+    const fullname = InputUI({ label: "Fullname", placeholder: "Enter your fullname" });
+    const phone = InputUI({ label: "Phone", placeholder: "Enter your phone" });
+    const email = InputUI({ label: "Email", placeholder: "Enter your email" });
+    const address = InputUI({ label: "Address", placeholder: "Enter your address" });
+    const birthDate = InputUI({ label: "BirthDate", placeholder: "Enter your birthDate", type: 'date' });
+    const salary = InputUI({ label: "Salary", placeholder: "Enter your salary", type: 'number' });
 
-    // LoadingDataAPI({ CreateTRPCNextBase: getEmployee })
     const [isVisible, setIsVisible] = useState(false);
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const toggleVisibility = () => setIsVisible(!isVisible);
@@ -37,7 +33,27 @@ const User = () => {
     const data1 = useMemo(() => {
         return data?.data ? data : { data: [], total: 0, itemPerPage: 0, page: 0 };
     }, [data])
-
+    const handlerSubmit = () => {
+        addUser.mutate({
+            username: username.value,
+            password: password,
+            roleId: roleId,
+            employee: {
+                jobCatelogyName: Array.from(jobName).map((item) => item.toString()) ?? undefined,
+                fullname: fullname?.value ?? undefined,
+                phone: phone?.value ?? undefined,
+                email: email?.value ?? undefined,
+                address: address?.value ?? undefined,
+                birthDate: new Date(birthDate?.value) ?? undefined,
+                salary: Number(salary.value),
+                isSalesman: false
+            } ?? undefined
+        });
+    }
+    if (roleList.isLoading) return <div>Loading...</div>
+    if (jobnameList.isLoading) return <div>Loading...</div>
+    if (roleList.isError) return <div>Error</div>
+    if (jobnameList.isError) return <div>Error</div>
     if (isError) <div>Error</div>
 
     const loadingState = isLoading || data?.data.length === 0 ? "loading" : "idle";
@@ -123,48 +139,43 @@ const User = () => {
                         <>
                             <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
                             <ModalBody className='grid grid-cols-2 md:auto-cols-min'>
-                                {/* z.object({
-                                username: z.string(),
-                                password: z.string().min(8).max(24),
-                                roleId: z.string(),
-                                employee: z.object({
-                                    jobname: z.string(),
-                                    fullname: z.string(),
-                                    name: z.string(),
-                                    phone: z.string().nullable(),
-                                    email: z.string().nullable(),
-                                    address: z.string().nullable(),
-                                    birthDate: z.date().default(new Date()),
-                                    salary: z.number(),
-                                    isSalesman: z.boolean(),
-                                    }).nullable(), */}
-
-                                <Input
-                                    label="Password"
-                                    placeholder="Enter your password"
-                                    variant="underlined"
-                                    name="password"
+                                {username.Element}
+                                <Input label="Password" placeholder="Enter your password" variant="underlined" onValueChange={setPassword} name="password"
                                     endContent={
                                         <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
-                                            {isVisible ? (
-                                                <EyeIcon className="h-6" />
-                                            ) : (
-                                                <EyeSlashIcon className="h-6" />
-                                            )}
+                                            {isVisible ? (<EyeIcon className="h-6" />) : (<EyeSlashIcon className="h-6" />)}
                                         </button>
                                     }
                                     type={isVisible ? "text" : "password"}
                                     className="max-w-xs pb-4"
                                     classNames={{ input: "max-w-xs", label: "text-white" }}
                                 />
-
-
+                                <Select variant="underlined" isRequired label="Role" className="max-w-xs" onChange={(e) => setRoleId(e.target.value)}>
+                                    {roleList.data.map((role) => (
+                                        <SelectItem key={role.id} value={role.name}>
+                                            {role.name}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
+                                <Select variant="underlined" selectionMode="multiple" isRequired label="Job Type" onSelectionChange={setjobName} className="max-w-xs">
+                                    {jobnameList.data.map((item) => (
+                                        <SelectItem key={item.name} value={item.name}>
+                                            {item.name}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
+                                {fullname.Element}
+                                {phone.Element}
+                                {email.Element}
+                                {address.Element}
+                                {birthDate.Element}
+                                {salary.Element}
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="light" onPress={onClose}>
                                     Close
                                 </Button>
-                                <Button color="primary" onPress={onClose}>
+                                <Button color="primary" onPress={onClose} onClick={handlerSubmit}>
                                     Action
                                 </Button>
                             </ModalFooter>

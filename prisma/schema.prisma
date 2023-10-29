@@ -39,7 +39,6 @@ model Permission {
 
 model Employee {
     id        String    @id @default(auto()) @map("_id") @db.ObjectId
-    name      String    @unique
     fullName  String?
     email     String?
     phone     String?

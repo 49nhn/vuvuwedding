@@ -1,10 +1,34 @@
-import React, { type PropsWithChildren } from 'react'
-type Layout = PropsWithChildren & { titleTop?: string }
+import { HomeIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useMemo } from 'react'
 
-const TitlePage = ({ titleTop}: Layout) => {
+
+const TitlePage = () => {
+
+    const router = useRouter();
+    const breadcrumb = useMemo(() => {
+        const path = router.asPath.split('/').slice(1);
+        const breadcrumb = path.map((item, index) => {
+            const link = path.slice(0, index + 1).join('/');
+            return (
+                <span key={index} className='flex'>
+                    <span className='text-default-500 '> <ChevronRightIcon width={"1.5rem"}/> </span>
+                    <Link href={`/${link}`} className='capitalize'>
+                        {item}
+                    </Link>
+                </span>
+            )
+        })
+        return breadcrumb;
+    }, [router.asPath])
+
     return (
-        <div className='w-full grid items-start bg-content1 shadow-small rounded-medium  dark:bg-content py-3 justify-center '>
-            <h1 className='text-xl font-bold'>{titleTop}</h1>
+        <div className='w-full grid items-start bg-content1 shadow-small rounded-medium  dark:bg-content py-3 '>
+            <div className='flex items-center ps-3'>
+                <HomeIcon width={"1.5rem"} />
+                {breadcrumb}
+            </div>
         </div>
     )
 }

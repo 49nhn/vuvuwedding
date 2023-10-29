@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -22,12 +21,6 @@ export const employeeRouter = createTRPCRouter({
             const itemPerPage = input.itemPerPage ?? 10;
             const employees = await ctx.prisma.employee.findMany(
                 {
-                    where: {
-                        name: {
-                            contains: input.filter?.string ?? "",
-                            mode: "insensitive",
-                        },
-                    },
                     skip: page * itemPerPage,
                     take: itemPerPage,
                     include: {

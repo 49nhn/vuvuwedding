@@ -22,6 +22,7 @@ const InputUI = (props?: InputProps | undefined) => {
     const [isInvalid, setIsInvalid] = useState(false)
     const handlerOnchange = (e: string) => {
         setValue(e)
+        if (!inputProps.Invalid) return
         if (e.length > 0) {
             setIsInvalid(false)
         } else {

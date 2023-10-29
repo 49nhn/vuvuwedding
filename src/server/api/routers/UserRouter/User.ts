@@ -41,9 +41,8 @@ export const userRouter = createTRPCRouter({
         password: z.string().min(8).max(24),
         roleId: z.string(),
         employee: z.object({
-          jobnameId: z.array(z.string()),
-          fullname: z.string(),
-          name: z.string(),
+          jobCatelogyName: z.array(z.string()),
+          fullname: z.string().nullable(),
           phone: z.string().nullable(),
           email: z.string().nullable(),
           address: z.string().nullable(),
@@ -73,21 +72,31 @@ export const userRouter = createTRPCRouter({
             connect: { id: input.roleId }
           },
           employees: {
-            create: input.employee ? {
-              ...input.employee,
+            create:
+            {
+              fullName: input.employee?.fullname,
+              phone: input.employee?.phone,
+              email: input.employee?.email,
+              address: input.employee?.address,
+              birthday: input.employee?.birthDate ?? new Date(),
+              salary: input.employee?.salary,
               JobNames: {
-                connect: input.employee.jobnameId.map(e => ({ id: e }))
+                create: input.employee?.jobCatelogyName.map((name) => ({
+                  JobCategory: {
+                    connect: { name },
+                  },
+                })),
               },
               salesmans: {
-                create: input.employee?.isSalesman
-              } || undefined,
-            } : undefined,
-          }
-        },
+                create: input.employee?.isSalesman ? {} : undefined,
+              },
+            },
+          },
+        }
       }));
-      return {
-        message: 'Success',
-      };
+return {
+  message: 'Success',
+};
     }),
 
 

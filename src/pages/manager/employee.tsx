@@ -2,11 +2,12 @@ import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { Table, Pagination, TableHeader, TableColumn, TableBody, Spinner, TableRow, TableCell, getKeyValue, Tooltip } from '@nextui-org/react';
 import { useMemo, useState } from 'react'
 import { GlobalConfig } from '~/config/GlobalConfig';
+import Error from '~/ui/Error';
 import { api } from '~/utils/api';
 
 const Employee = () => {
   const [page, setPage] = useState(1);
-  const { data, isLoading, isError } = api.Employee.list.useQuery({ page: page, itemPerPage: 10, filter: null }, GlobalConfig.tanstackOption);
+  const { data, isLoading, isError, failureReason } = api.Employee.list.useQuery({ page: page, itemPerPage: 10, filter: null }, GlobalConfig.tanstackOption)
   const pages = useMemo(() => {
     return data?.total ? Math.ceil(data.total / data.itemPerPage) : 0;
   }, [data?.total, data?.itemPerPage]);
@@ -14,7 +15,7 @@ const Employee = () => {
   const employeeList = useMemo(() => {
     return data?.data ? data : { data: [], total: 0, itemPerPage: 0, page: 0 };
   }, [data])
-  if (isError) <div>Error</div>
+  if (isError) Error(failureReason);
   console.log(employeeList);
 
   const loadingState = isLoading ? "loading" : "idle";
