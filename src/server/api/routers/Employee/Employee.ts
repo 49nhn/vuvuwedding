@@ -30,7 +30,11 @@ export const employeeRouter = createTRPCRouter({
                                 JobCategory: true,
                             },
                         },
-                        User: true,
+                        User: {
+                            include: {
+                                roles: true,
+                            },
+                        },
                     },
 
                 });
@@ -38,13 +42,13 @@ export const employeeRouter = createTRPCRouter({
             if (!employees) throw new TRPCError({ code: "NOT_FOUND" });
             const data = employees.map(({ salesmans, jobNameId, JobNames, User, userId, ...employees }) => {
                 return {
+                    role: User?.roles?.name,
                     salesman: salesmans ? true : false,
                     jobNames: [...new Set(JobNames.map((jobName) => jobName.JobCategory?.name))],
                     users: User ? User.username : undefined,
                     ...employees,
                 };
-            })
-
+            });
             return {
                 data,
                 total: await ctx.prisma.employee.count(),
@@ -99,5 +103,25 @@ export const employeeRouter = createTRPCRouter({
             const jobCategories = await ctx.prisma.jobCategory.findMany();
             return jobCategories;
         }),
+    deleteEmployee: publicProcedure
+        .input(
+            z.object({
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const employee = await ctx.prisma.employee.findUnique({
+                where: {
+                    id: input.id,
+                },
+            });
+            if (!employee) throw new TRPCError({ code: "NOT_FOUND" });
+            return await ctx.prisma.employee.delete({
+                where: {
+                    id: input.id,
+                },
+            });
+        }),
+
 
 });

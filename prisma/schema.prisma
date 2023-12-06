@@ -17,7 +17,7 @@ model User {
     createdAt DateTime   @default(now())
     deletedAt DateTime?
     isDeleted Boolean    @default(false)
-    roles     Role       @relation(fields: [roleId], references: [id])
+    roles     Role       @relation(fields: [roleId], references: [id], onDelete: Cascade) 
     roleId    String     @db.ObjectId
     employees Employee[]
 }
@@ -46,7 +46,7 @@ model Employee {
     salesmans Salesman?
     salary    Float     @default(0)
     birthday  DateTime  @default(now())
-    User      User?     @relation(fields: [userId], references: [id])
+    User      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String?   @db.ObjectId
     JobNames  JobName[] @relation(fields: [jobNameId], references: [id])
     jobNameId String[]  @db.ObjectId

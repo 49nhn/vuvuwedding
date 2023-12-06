@@ -3,7 +3,6 @@ import { hash } from "bcrypt";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import type { User } from "@prisma/client";
 import { AuthMiddleware } from "~/server/middleware/Auth.middleware";
 
 export const userRouter = createTRPCRouter({
@@ -94,11 +93,25 @@ export const userRouter = createTRPCRouter({
           },
         }
       }));
-return {
-  message: 'Success',
-};
+      return {
+        message: 'Success',
+      };
     }),
-
-
+  delete: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.user.delete({
+        where: {
+          id: input.id,
+        },
+      });
+      return {
+        message: 'Success',
+      };
+    }),
 });
 

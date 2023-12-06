@@ -1,5 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, type PropsWithChildren } from "react";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import ChangeTheme from "~/ui/ChangeTheme";
 import Head from "next/head";
 import { GlobalConfig } from "~/config/GlobalConfig";
@@ -29,13 +30,14 @@ const MainLayout = ({ children, title = "" }: Layout) => {
       </Head>
       <main className="flex bg-gradient-to-t from-orange-400 to-sky-400 text-black dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-gray-700 dark:via-gray-900 dark:to-black dark:text-white">
         <Sidebar />
-        <div className="h-screen p-2 flex flex-col w-full ">
-          <TitlePage/>
-          <div className=" w-full h-full pt-3  mx-auto overflow-y-scroll ">
+        <div className="h-screen  flex flex-col w-full ">
+          <TitlePage />
+          <div className=" w-full h-full p-3 mx-auto overflow-y-scroll ">
             {children}
           </div>
         </div>
       </main>
+      <ToastContainer />
       <ChangeTheme />
     </>
   );
