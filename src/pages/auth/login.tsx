@@ -9,7 +9,6 @@ export default function Login() {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
 
-
     const toggleVisibility = () => setIsVisible(!isVisible);
     const login = api.Auth.login.useMutation();
     const { data } = api.Auth.me.useQuery();

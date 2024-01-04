@@ -2,274 +2,50 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mongodb"
-    url      = env("DATABASE_URL")
-}
-
-model User {
-    id        String     @id @default(auto()) @map("_id") @db.ObjectId
-    username  String     @unique
-    password  String
-    createdAt DateTime   @default(now())
-    deletedAt DateTime?
-    isDeleted Boolean    @default(false)
-    roles     Role       @relation(fields: [roleId], references: [id], onDelete: Cascade) 
-    roleId    String     @db.ObjectId
-    employees Employee[]
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
 }
 
 model Role {
-    id          String       @id @default(auto()) @map("_id") @db.ObjectId
-    name        String       @unique
-    Permissions Permission[]
-    User        User[]
+  id             Int              @id @default(autoincrement())
+  username       String           @unique
+  password       String
+  createdAt      DateTime         @default(now())
+  deletedAt      DateTime?
+  isDeleted      Boolean          @default(false)
+  fullName       String?
+  email          String?
+  phone          String?
+  address        String?
+  salary         Float            @default(0)
+  birthday       DateTime         @default(now())
+  rolePermission RolePermission[]
+}
+
+model Role {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique
+  RolePermission RolePermission[]
 }
 
 model Permission {
-    id      String  @id @default(auto()) @map("_id") @db.ObjectId
-    name    String
-    isAllow Boolean @default(false)
-    Role    Role?   @relation(fields: [roleId], references: [id])
-    roleId  String? @db.ObjectId
+  id             Int              @id @default(autoincrement())
+  name           String
+  isAllow        Boolean          @default(false)
+  RolePermission RolePermission[]
 }
 
-model Employee {
-    id        String    @id @default(auto()) @map("_id") @db.ObjectId
-    fullName  String?
-    email     String?
-    phone     String?
-    address   String?
-    salesmans Salesman?
-    salary    Float     @default(0)
-    birthday  DateTime  @default(now())
-    User      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId    String?   @db.ObjectId
-    JobNames  JobName[] @relation(fields: [jobNameId], references: [id])
-    jobNameId String[]  @db.ObjectId
-}
-
-model JobName {
-    id            String       @id @default(auto()) @map("_id") @db.ObjectId
-    JobCategory   JobCategory? @relation(fields: [jobCategoryId], references: [id])
-    jobCategoryId String?      @db.ObjectId
-    Employee      Employee[]   @relation(fields: [employeeId], references: [id])
-    employeeId    String[]     @db.ObjectId
-}
-
-model JobCategory {
-    id      String    @id @default(auto()) @map("_id") @db.ObjectId
-    name    String    @unique
-    Jobname JobName[]
-}
-
-model Salesman {
-    id                  String                @id @default(auto()) @map("_id") @db.ObjectId
-    employee            Employee              @relation(fields: [employeeId], references: [id])
-    employeeId          String                @unique @db.ObjectId
-    Show                Show[]
-    ReservationSalesman ReservationSalesman[]
-}
-
-model ReservationSalesman {
-    id          String        @id @default(auto()) @map("_id") @db.ObjectId
-    name        String
-    Reservation Reservation[]
-    Salesman    Salesman?     @relation(fields: [salesmanId], references: [id])
-    salesmanId  String?       @db.ObjectId
-}
-
-model Reservation {
-    id                    String               @id @default(auto()) @map("_id") @db.ObjectId
-    status                ReservationStatus    @default(pending)
-    dateMonth             Int
-    dateYear              Int
-    totalPrice            Float                @default(0)
-    ReservationSalesman   ReservationSalesman? @relation(fields: [reservationSalesmanId], references: [id])
-    reservationSalesmanId String?              @db.ObjectId
-    Decoration            Decoration[]
-    Photo                 Photo[]
-    MakeUp                MakeUp[]
-    WeddingFruit          WeddingFruit[]
-    Flower                Flower[]
-    BridesmaidDress       BridesmaidDress[]
-    Invoice               Invoice?             @relation(fields: [invoiceId], references: [id])
-    invoiceId             String?              @db.ObjectId
-}
-
-enum ReservationStatus {
-    pending
-    deposited
-    processing
-    completed
-}
-
-model Show {
-    id              String            @id @default(auto()) @map("_id") @db.ObjectId
-    name            String
-    status          ShowStatus        @default(pending)
-    createdAt       DateTime          @default(now())
-    updatedAt       DateTime          @updatedAt
-    deletedAt       DateTime?
-    isDeleted       Boolean           @default(false)
-    totalPrice      Float             @default(0)
-    Salesman        Salesman?         @relation(fields: [salesmanId], references: [id])
-    salesmanId      String?           @db.ObjectId
-    Decoration      Decoration[]
-    Photo           Photo[]
-    MakeUp          MakeUp[]
-    WeddingFruit    WeddingFruit[]
-    Invoice         Invoice?
-    Flower          Flower[]
-    BridesmaidDress BridesmaidDress[]
-}
-
-enum ShowStatus {
-    pending
-    deposited
-    processing
-    completed
-}
-
-model Invoice {
-    id          String        @id @default(auto()) @map("_id") @db.ObjectId
-    name        String
-    desc        String?
-    date        DateTime
-    deposit     Float         @default(0)
-    Show        Show          @relation(fields: [showId], references: [id])
-    showId      String        @unique @db.ObjectId
-    Reservation Reservation[]
-}
-
-model Decoration {
-    id                String              @id @default(auto()) @map("_id") @db.ObjectId
-    name              String
-    desc              String?
-    price             Float
-    date              DateTime
-    Show              Show                @relation(fields: [showId], references: [id])
-    showId            String              @db.ObjectId
-    AncestralCeremony AncestralCeremony[]
-    WeddingBanquet    WeddingBanquet[]
-    Image             Image[]
-    Reservation       Reservation?        @relation(fields: [reservationId], references: [id])
-    reservationId     String?             @db.ObjectId
-}
-
-//gia tiên
-model AncestralCeremony {
-    id           String          @id @default(auto()) @map("_id") @db.ObjectId
-    name         String
-    desc         String?
-    ceremony     String?
-    date         DateTime
-    Ceremony     Ceremony?
-    Decoration   Decoration?     @relation(fields: [decorationId], references: [id])
-    decorationId String?         @db.ObjectId
-    Pack         PackAncestral[]
-}
-
-model Image {
-    id           String      @id @default(auto()) @map("_id") @db.ObjectId
-    name         String
-    desc         String
-    url          String
-    date         DateTime
-    Decoration   Decoration? @relation(fields: [decorationId], references: [id])
-    decorationId String?     @db.ObjectId
-}
-
-//g
-model PackAncestral {
-    id                  String             @id @default(auto()) @map("_id") @db.ObjectId
-    name                String
-    desc                String
-    AncestralCeremony   AncestralCeremony? @relation(fields: [ancestralCeremonyId], references: [id])
-    ancestralCeremonyId String?            @db.ObjectId
-}
-
-model DecorColor {
-    id        String @id @default(auto()) @map("_id") @db.ObjectId
-    colorName String
-    colorCode String
-}
-
-enum Ceremony {
-    EngagementCeremony
-    WeddingCeremony
-    RroposalCeremony
-}
-
-//tiệc cưới
-model WeddingBanquet {
-    id           String      @id @default(auto()) @map("_id") @db.ObjectId
-    name         String
-    desc         String
-    date         DateTime
-    price        Float       @default(0)
-    Decoration   Decoration? @relation(fields: [decorationId], references: [id])
-    decorationId String?     @db.ObjectId
-}
-
-model Photo {
-    id            String       @id @default(auto()) @map("_id") @db.ObjectId
-    name          String
-    desc          String
-    url           String
-    date          DateTime
-    Show          Show         @relation(fields: [showId], references: [id])
-    showId        String       @db.ObjectId
-    Reservation   Reservation? @relation(fields: [reservationId], references: [id])
-    reservationId String?      @db.ObjectId
-}
-
-model MakeUp {
-    id   String   @id @default(auto()) @map("_id") @db.ObjectId
-    name String
-    desc String
-    date DateTime
-
-    Show          Show         @relation(fields: [showId], references: [id])
-    showId        String       @db.ObjectId
-    Reservation   Reservation? @relation(fields: [reservationId], references: [id])
-    reservationId String?      @db.ObjectId
-}
-
-//tráp hỏi
-model WeddingFruit {
-    id            String       @id @default(auto()) @map("_id") @db.ObjectId
-    name          String
-    desc          String
-    date          DateTime
-    Show          Show         @relation(fields: [showId], references: [id])
-    showId        String       @db.ObjectId
-    Reservation   Reservation? @relation(fields: [reservationId], references: [id])
-    reservationId String?      @db.ObjectId
-}
-
-model Flower {
-    id            String       @id @default(auto()) @map("_id") @db.ObjectId
-    name          String
-    desc          String
-    date          DateTime
-    Show          Show         @relation(fields: [showId], references: [id])
-    showId        String       @db.ObjectId
-    Reservation   Reservation? @relation(fields: [reservationId], references: [id])
-    reservationId String?      @db.ObjectId
-}
-
-//váy cưới
-model BridesmaidDress {
-    id            String       @id @default(auto()) @map("_id") @db.ObjectId
-    name          String
-    desc          String
-    date          DateTime
-    Show          Show         @relation(fields: [showId], references: [id])
-    showId        String       @db.ObjectId
-    Reservation   Reservation? @relation(fields: [reservationId], references: [id])
-    reservationId String?      @db.ObjectId
+// role && permission
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  Role         User?      @relation(fields: [userId], references: [id])
+  userId       Int?
 }

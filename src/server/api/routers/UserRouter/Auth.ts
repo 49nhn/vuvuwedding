@@ -26,7 +26,7 @@ export const authRouter = createTRPCRouter({
         if (!user)
           throw new TRPCError({
             code: 'UNAUTHORIZED',
-            message: 'User not exist',
+            message: 'Role not exist',
           });
         const comparePassword = await compare(input.password, user.password);
         if (comparePassword) {
@@ -67,7 +67,6 @@ export const authRouter = createTRPCRouter({
 
     const checkUser = (await ctx.prisma.user.findUnique({
       where: {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         username: res.username as string,
       },
     })) as unknown as User;

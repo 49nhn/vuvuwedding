@@ -1,14 +1,18 @@
 import MainLayout from "~/layouts/MainLayout";
+import {NextPageWithLayout} from "~/pages/_app";
+import {ReactElement} from "react";
 
-
-export default function Home() {
-    return(
-      <MainLayout title="Home">
-        <div className="h-[200vh]">
-
-        </div>
-        {/* <button onClick={() => signIn("credentials", { username: 'admin', password: 'VuvuWedding@2021' })}>SignIn</button> */}
-      </MainLayout>
-    );
+const Page: NextPageWithLayout = () => {
+    return <p>hello world</p>
 }
+
+Page.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <MainLayout>
+                {page}
+        </MainLayout>
+    )
+}
+
+export default Page
 //vuvuwedding VuvuWedding@2021
