@@ -9,8 +9,9 @@ import MainLayout from "~/layouts/MainLayout";
 import {type NextPageWithLayout} from "~/pages/_app";
 import {type ReactElement} from "react";
 
-const User: NextPageWithLayout = () =>
-    (
+const User: NextPageWithLayout = () => {
+    console.log('User')
+    return (
         <div className='flex w-full justify-end pb-2 gap-x-3'>
             <Input
                 isClearable
@@ -36,7 +37,7 @@ const User: NextPageWithLayout = () =>
             </Dropdown>
         </div>
     )
-
+}
 
 User.getLayout = function getLayout(page: ReactElement) {
     return (

@@ -1,7 +1,23 @@
-import { Accordion, AccordionItem, Listbox, ListboxItem, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
-import { AdjustmentsVerticalIcon, ArchiveBoxIcon, CogIcon, HomeIcon, UserGroupIcon, UsersIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import {
+    Accordion,
+    AccordionItem,
+    Listbox,
+    ListboxItem,
+    Popover,
+    PopoverContent,
+    PopoverTrigger, ScrollShadow
+} from "@nextui-org/react";
+import {
+    AdjustmentsVerticalIcon,
+    ArchiveBoxIcon,
+    ChevronRightIcon,
+    CogIcon,
+    HomeIcon,
+    UserGroupIcon,
+    UsersIcon
+} from "@heroicons/react/24/outline";
 import Logo from "~/ui/Logo";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 
 function classNames(...classes: string[]) {
@@ -16,6 +32,27 @@ const menuItems = [
     },
     {
         title: "MDM",
+        icon: <CogIcon width="1.5rem"/>,
+        subMenu: [
+            {
+                title: "Numbering Config",
+                icon: <UserGroupIcon width="1.5rem"/>,
+                href: "/mdm/numberingConfig",
+            },
+            {
+                title: "Department",
+                icon: <UsersIcon width="1.5rem"/>,
+                href: "/mdm/department",
+            },
+            {
+                title: "Employee",
+                icon: <AdjustmentsVerticalIcon width="1.5rem"/>,
+                href: "/mdm/employee"
+            },
+        ]
+    },
+    {
+        title: "Employee",
         icon: <CogIcon width="1.5rem"/>,
         subMenu: [
             {
@@ -46,9 +83,9 @@ const menuItems = [
                 href: "/inventory/all"
             },
             {
-                title: "Decorator",
+                title: "Decoration",
                 icon: <AdjustmentsVerticalIcon width="1.5rem"/>,
-                href: "/inventory/decorator"
+                href: "/inventory/decoration"
             },
             {
                 title: "Photo",
@@ -63,7 +100,7 @@ const menuItems = [
             {
                 title: "Wedding dress",
                 icon: <AdjustmentsVerticalIcon width="1.5rem"/>,
-                href: "/inventory/wedding-dress"
+                href: "/inventory/weddingDress"
             },
         ]
     },
@@ -79,7 +116,7 @@ const menuItems = [
             {
                 title: "Decoration",
                 icon: <AdjustmentsVerticalIcon width="1.5rem"/>,
-                href: "/shows/decorator"
+                href: "/shows/decoration"
             },
             {
                 title: "Photo",
@@ -104,7 +141,7 @@ const menuItems = [
             {
                 title: "Wedding Flower",
                 icon: <AdjustmentsVerticalIcon width="1.5rem"/>,
-                href: "/shows/weddingCar"
+                href: "/shows/weddingFlower"
             },
             {
                 title: "Other",
@@ -115,21 +152,19 @@ const menuItems = [
     }
 
 ]
-const SidebarPro = () => {
+export const Sidebar = () => {
     const [isCollapsed, setCollapsed] = useState(true);
-
-
     const renderMenuItems = () =>
         menuItems.map((item, index) => {
             if (item.subMenu) {
                 return (
-                    <ListboxItem key={index} className="h-fit py-0">
+                    <ListboxItem key={index} className="h-auto py-0">
                         {
-                            isCollapsed ? <Accordion isCompact itemClasses={{
+                            isCollapsed ? <Accordion isCompact selectionMode={"single"} itemClasses={{
                                 base: "py-0 w-full",
                                 title: "font-normal text-sm text-inherit",
                             }}>
-                                <AccordionItem className="py-0 w-full " startContent={item.icon} key={index + 10}
+                                <AccordionItem className="py-0 " startContent={item.icon} key={item.title}
                                                aria-label={item.title}
                                                title={item.title}>
                                     {item.subMenu.map((subItem, index) => (
@@ -152,8 +187,8 @@ const SidebarPro = () => {
                                         {item.icon} {isCollapsed && <span>{item.title}</span>}
                                     </p>
                                 </PopoverTrigger>
-                                <PopoverContent>
-                                    <Listbox className="w-full">
+                                <PopoverContent className="bg-cyan-100/80 dark:bg-blue-950/50">
+                                    <Listbox className="w-full ">
                                         {item.subMenu.map((subItem, index) => (
                                             <ListboxItem key={index} className="w-full">
                                                 <Link className='flex items-center '
@@ -183,10 +218,10 @@ const SidebarPro = () => {
             }
         })
     return (
-        <div className="max-h-screen-[2rem]">
-            <div className='h-34 z-10 relative '>
+        <div className="max-h-screen">
+            <div className=' z-10 relative border-b-blue-900  '>
                 <div
-                    className='flex items-center justify-center rounded-r-medium  py-3  bg-cyan-100/20 dark:bg-cyan-600/20'>
+                    className='flex items-center justify-center rounded-r-medium  py-3 max-h-[9vh]  bg-cyan-100/20 dark:bg-blue-950/10'>
                     <Logo/>
                     {isCollapsed &&
                         <div className=''>
@@ -194,18 +229,19 @@ const SidebarPro = () => {
                         </div>}
                 </div>
                 <ChevronRightIcon onClick={() => setCollapsed(!isCollapsed)}
-                                  className={classNames(isCollapsed ? "transform rotate-180" : "transform rotate-0", "absolute -right-2 rounded-md bg-sky-600/30 -translate-y-1/2 w-6 h-6 text-inherit text-white p-1")}/>
+                                  className={classNames(isCollapsed ? "transform rotate-180" : "transform rotate-0", "absolute -right-2  z-50 rounded-md bg-sky-600/30 -translate-y-1/2 w-6 h-6 text-inherit text-white p-1")}/>
 
             </div>
-            <Listbox
-                aria-label="Role Menu"
-                className={classNames(isCollapsed ? "w-64" : "w-16 ", "h-screen flex flex-col  shadow-small bg-cyan-100/20 dark:bg-cyan-950/20 rounded-r-medium  p-0 gap-0 divide-y divide-default-300/50 dark:divide-default-100/80 overflow-visible")}
-                itemClasses={{
-                    base: "px-3 first:rounded-t-medium last:rounded-b-medium rounded-none gap-3 h-12 data-[hover=true]:bg-default-100/20",
-                }}>
-                {renderMenuItems()}
-            </Listbox>
+            <ScrollShadow className={" w-full relative shadow-small bg-cyan-100/20 dark:bg-blue-950/5 rounded-r-medium"} hideScrollBar>
+                <Listbox selectionMode="none"
+                         aria-label="Role Menu"
+                         className={classNames(isCollapsed ? "w-64" : "w-16 ", " h-[91vh] flex flex-col    p-0 gap-0 divide-y divide-default-300/50 dark:divide-default-100/80 overflow-visible")}
+                         itemClasses={{
+                             base: "px-3 first:rounded-t-medium last:rounded-b-medium rounded-none gap-3 h-12 data-[hover=true]:bg-default-100/20",
+                         }}>
+                    {renderMenuItems()}
+                </Listbox>
+            </ScrollShadow>
         </div>
     )
 }
-export { SidebarPro }
