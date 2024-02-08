@@ -32,7 +32,7 @@ const MainLayout = ({ children, title = "" }: Layout) => {
             <main
                 className="flex h-screen bg-gradient-to-t from-orange-400 to-sky-400 text-black dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-gray-700 dark:via-gray-900 dark:to-black dark:text-white">
                 <Sidebar/>
-                <div className="h-full flex flex-col w-full ">
+                <div className="h-full flex flex-col w-full nextui-modal-content ">
                     <TitlePage/>
                     <div className=" w-full p-3 mx-auto overflow-y-scroll ">
                         {children}

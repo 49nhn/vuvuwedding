@@ -69,6 +69,9 @@ export const authRouter = createTRPCRouter({
       where: {
         username: res.username as string,
       },
+      include: {
+        roles: true,
+      },
     })) as unknown as User;
     if (checkUser)
       return {

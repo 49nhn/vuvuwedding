@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Card, CardBody, CardHeader, Input, Image, Button } from "@nextui-org/react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/20/solid";
 import React from "react";
+import { toast } from "react-toastify";
 export default function Login() {
     const [isVisible, setIsVisible] = React.useState(false);
     const [username, setUsername] = React.useState("");
@@ -14,6 +15,7 @@ export default function Login() {
     const { data } = api.Auth.me.useQuery();
     const router = useRouter()
     const submitLogin = () => {
+        if (!username || !password) return toast("Please fill in all fields", { type: "error" })
         login.mutate({
             username,
             password
@@ -31,9 +33,9 @@ export default function Login() {
 
     return (
         <AuthLayout>
-            <Card isBlurred radius="lg" className="border-none min-w-[22em] w-[25rem] bg-gray-900/40 text-white  min-h-[20rem]">
+            <Card isBlurred radius="lg" className="border-none min-w-[22em] w-[25rem] bg-gray-900/40   min-h-[20rem]">
                 <CardHeader className="w-full flex justify-center" > <Image src="/images/logo-vuvu.png" className="h-[3rem]" alt="vuvuweding"></Image> </CardHeader>
-                <CardBody className="bg-gradient-to-r from-sky-900/40 to-indigo-900/40 h-full flex items-center justify-center" >
+                <CardBody className="bg-gradient-to-r text-base from-sky-900/40 to-indigo-900/40 h-full flex items-center justify-center" >
                     <form className=""   >
                         {login.error && <div className="bg-red-500 text-white p-1 my-2 ">
                             {login.error?.message}
@@ -41,13 +43,12 @@ export default function Login() {
                         <Input
                             label="Username:"
                             name="username"
+                            autoFocus
                             labelPlacement="outside-left"
                             placeholder="Enter your Username"
                             variant="bordered"
                             type="text"
                             onChange={(e) => setUsername(e.target.value)}
-
-                            isInvalid={true}
                             onClear={() => console.log("input cleared")}
                             classNames={{ input: "w-38", label: "text-white" }}
                             className="pb-4 "
@@ -58,7 +59,6 @@ export default function Login() {
                             variant="bordered"
                             name="password"
                             onChange={(e) => setPassword(e.target.value)}
-                            isInvalid={true}
                             placeholder="Enter your password"
                             endContent={
                                 <button className="focus:outline-none" type="button" onClick={toggleVisibility}>

@@ -40,14 +40,14 @@ const menuItems = [
                 href: "/mdm/numberingConfig",
             },
             {
-                title: "Department",
+                title: "Role",
                 icon: <UsersIcon width="1.5rem"/>,
-                href: "/mdm/department",
+                href: "/mdm/role",
             },
             {
-                title: "Employee",
+                title: "Permission",
                 icon: <AdjustmentsVerticalIcon width="1.5rem"/>,
-                href: "/mdm/employee"
+                href: "/mdm/permission"
             },
         ]
     },
@@ -61,15 +61,11 @@ const menuItems = [
                 href: "/employee/user",
             },
             {
-                title: "Role",
+                title: "Department",
                 icon: <UsersIcon width="1.5rem"/>,
-                href: "/employee/role",
+                href: "/employee/department",
             },
-            {
-                title: "Permission",
-                icon: <AdjustmentsVerticalIcon width="1.5rem"/>,
-                href: "/employee/permission"
-            },
+         
         ]
     },
     {

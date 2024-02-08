@@ -3,7 +3,7 @@ import React, { type ReactElement, useCallback, useEffect, useMemo, useReducer, 
 import MainLayout from "~/layouts/MainLayout";
 import { api } from "~/utils/api";
 import { GlobalConfig } from "~/config/GlobalConfig";
-import { NumberingConfig } from '@prisma/client'
+import { Permission } from '@prisma/client'
 import {
     Input,
     type SortDescriptor,
@@ -33,38 +33,11 @@ const columns = [
         label: "Name",
         sortable: true,
     },
-    {
-        key: "prefix",
-        label: "Prefix",
-        sortable: true,
-    },
-    {
-        key: "paddingZeroNumber",
-        label: "Padding Zero Number",
-        sortable: true,
-    },
-    {
-        key: "suffix",
-        label: "Suffix"
-    },
-    {
-        key: "currentNumber",
-        label: "Current Number",
-        sortable: true,
-    },
-
 ];
-const INITIAL_VISIBLE_COLUMNS = ["name", "prefix", "paddingZeroNumber", "suffix", "currentNumber", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "description", "permissions", "actions"];
 
-const NumberingConfig: NextPageWithLayout = () => {
-    const [dataPost, setDataPost] = useReducer((state: any, newState: any) => ({ ...state, ...newState }), {
-        id: 0,
-        name: "",
-        prefix: "",
-        paddingZeroNumber: 0,
-        suffix: "",
-        currentNumber: 0
-    });
+const Permission: NextPageWithLayout = () => {
+    const [dataPost, setDataPost] = useReducer((state: any, newState: any) => ({ ...state, ...newState }), {});
     const [filter] = useState({});
     const [sort, setSort] = useState<{ field: string, order?: "asc" | "desc" | undefined }[]>([]);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({});
@@ -73,22 +46,18 @@ const NumberingConfig: NextPageWithLayout = () => {
         INITIAL_VISIBLE_COLUMNS,
         onAdd: () => {
             setDataPost({
-                id: 0,
+                id: undefined,
                 name: "",
-                prefix: "",
-                paddingZeroNumber: 0,
-                suffix: "",
-                currentNumber: 0
-            });
+            })
             onOpen();
         }
     });
     const { bottomContent, setLength, page, itemPerPage } = BottomTable()
 
-    const createItem = api.NumberingConfig.create.useMutation(GlobalConfig.tanstackOption);
-    const updateItem = api.NumberingConfig.update.useMutation(GlobalConfig.tanstackOption);
-    const deleteItem = api.NumberingConfig.delete.useMutation(GlobalConfig.tanstackOption);
-    const { data, isError, isLoading, refetch, isFetching } = api.NumberingConfig.getList.useQuery({
+    const createItem = api.Permission.create.useMutation(GlobalConfig.tanstackOption);
+    const updateItem = api.Permission.update.useMutation(GlobalConfig.tanstackOption);
+    const deleteItem = api.Permission.delete.useMutation(GlobalConfig.tanstackOption);
+    const { data, isError, isLoading, refetch, isFetching } = api.Permission.getList.useQuery({
         page,
         itemPerPage,
         search,
@@ -98,7 +67,7 @@ const NumberingConfig: NextPageWithLayout = () => {
 
     const items = useMemo(() => {
         if (!data) return [];
-        return data?.data ?? []
+        return data?.items ?? []
     }, [data, isError, isLoading]);
 
     useEffect(() => setLength(data?.total ?? 0), [isLoading, isFetching]);
@@ -106,17 +75,10 @@ const NumberingConfig: NextPageWithLayout = () => {
     const { RenderModal, onOpen, isOpen } = MyModal({
         Content: <div className="flex flex-col w-full  md:flex-nowrap gap-4">
             <Input label="Name" defaultValue={dataPost?.name}
-                   onValueChange={(value) => setDataPost({ name: value.toString() })}/>
-            <Input label="prefix" defaultValue={dataPost?.prefix as string}
-                   onValueChange={(value) => setDataPost({ prefix: value })}/>
-            <Input label="paddingZeroNumber" type="number" inputMode={"numeric"}
-                   defaultValue={dataPost?.paddingZeroNumber?.toString()}
-                   onValueChange={(value) => setDataPost({ paddingZeroNumber: Number(value) })}/>
-            <Input label="suffix" defaultValue={dataPost?.suffix?.toString() ?? ""}
-                   onValueChange={(value) => setDataPost({ suffix: value })}/>
+                   onValueChange={(value) => setDataPost({ name: value })}/>
         </div>,
         callBack: async () => {
-            if (dataPost?.id > 0) {
+            if (dataPost?.id) {
                 await updateItem.mutateAsync(dataPost)
             } else {
                 await createItem.mutateAsync(dataPost)
@@ -133,8 +95,8 @@ const NumberingConfig: NextPageWithLayout = () => {
         }]);
     }, [sortDescriptor]);
 
-    const renderCell = useCallback((item: NumberingConfig, columnKey: React.Key) => {
-        const cellValue = item[columnKey as keyof NumberingConfig];
+    const renderCell = useCallback((item: Permission, columnKey: React.Key) => {
+        const cellValue = item[columnKey as keyof Permission];
         switch (columnKey) {
             case "actions":
                 return (
@@ -195,14 +157,14 @@ const NumberingConfig: NextPageWithLayout = () => {
     )
 }
 
-NumberingConfig.getLayout = function getLayout(page: ReactElement) {
+Permission.getLayout = function getLayout(page: ReactElement) {
     return (
         <MainLayout>
             {page}
         </MainLayout>
     )
 }
-export default NumberingConfig
+export default Permission
 
 /*
  * Copyright (c) 2024. 

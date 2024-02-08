@@ -1,9 +1,10 @@
-import { authRouter } from "~/server/api/routers/UserRouter/Auth";
-import { userRouter } from "~/server/api/routers/UserRouter/User";
+import { authRouter } from "~/server/api/routers/Auth/Auth";
 import { createTRPCRouter } from "~/server/api/trpc";
-import { roleRouter } from "./routers/UserRouter/Roles";
-import { permissionRouter } from "./routers/UserRouter/Permissions";
-import { numberingConfig } from "~/server/api/routers/Mdm/NumberingConfig";
+import { roleRouter } from "./routers/Mdm/Role";
+import { permissionRouter } from "./routers/Mdm/Permission";
+import { numberingConfigRouter } from "~/server/api/routers/Mdm/NumberingConfig";
+import { departmentRouter } from "~/server/api/routers/Employee/Deparment";
+import { userRouter } from "~/server/api/routers/Employee/User";
 
 /**
  * This is the primary router for your server.
@@ -12,10 +13,11 @@ import { numberingConfig } from "~/server/api/routers/Mdm/NumberingConfig";
  */
 export const appRouter = createTRPCRouter({
     Auth: authRouter,
-    User: userRouter,
     Role: roleRouter,
     Permission: permissionRouter,
-    NumberingConfig: numberingConfig,
+    NumberingConfig: numberingConfigRouter,
+    Department: departmentRouter,
+    User: userRouter,
     
 });
 

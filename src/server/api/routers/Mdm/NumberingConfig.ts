@@ -4,8 +4,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
 import { AuthMiddleware } from "~/server/middleware/Auth.middleware";
 import { TRPCError } from "@trpc/server";
 
-export const numberingConfig = createTRPCRouter({
-
+export const numberingConfigRouter = createTRPCRouter({
     getList: AuthMiddleware
         .input(
             z.object({
@@ -13,9 +12,9 @@ export const numberingConfig = createTRPCRouter({
                 filter: z.object({
                     name: z.string().nullish(),
                     prefix: z.string().nullish(),
-                    description: z.string().nullish(),
+                    paddingZeroNumber: z.number().nullish(),
                     suffix: z.string().nullish(),
-                    number: z.number().nullish(),
+                    currentNumber: z.number().nullish(),
                 }).nullish(),
                 sort: z.array(z.object({
                         field: z.string(),
@@ -44,13 +43,14 @@ export const numberingConfig = createTRPCRouter({
                                 equals: input?.filter?.name ?? undefined,
                             },
                             prefix: input?.filter?.prefix ?? undefined,
-                            description: input?.filter?.description ?? undefined,
+                            paddingZeroNumber: input?.filter?.paddingZeroNumber ?? undefined,
                             suffix: input?.filter?.suffix ?? undefined,
-                            number: input?.filter?.number ?? undefined,
+                            currentNumber: input?.filter?.currentNumber ?? undefined,
                         },
                         orderBy: sort,
+
                     });
-                if (!numberingConfigs) new TRPCError({ code: "NOT_FOUND", message: "Department not found" });
+                if (!numberingConfigs) new TRPCError({ code: "NOT_FOUND", message: "Numbering Config not found" });
                 return {
                     data: numberingConfigs,
                     total: await ctx.prisma.numberingConfig.count(),
@@ -58,70 +58,66 @@ export const numberingConfig = createTRPCRouter({
                 };
             }
         ),
-    
+
     create: AuthMiddleware
         .input(
             z.object({
                 name: z.string(),
-                prefix: z.string(),
-                description: z.string().nullish(),
-                suffix: z.string(),
-                number: z.number(),
+                prefix: z.string().nullish(),
+                paddingZeroNumber: z.number().nullish(),
+                suffix: z.string().nullable(),
             })
         )
-        .query(async ({ ctx, input }) => {
+        .mutation(async ({ ctx, input }) => {
             const numberingConfig = await ctx.prisma.numberingConfig.create({
                 data: {
                     name: input.name,
-                    prefix: input.prefix,
-                    description: input.description,
+                    prefix: input.prefix ?? null,
                     suffix: input.suffix,
-                    number: input.number,
+                    paddingZeroNumber: input.paddingZeroNumber ?? undefined,
                 },
             });
-            if (!numberingConfig) new TRPCError({ code: "NOT_FOUND", message: "Department not found" });
+            if (!numberingConfig) new TRPCError({ code: "NOT_FOUND", message: "Numbering Config not found" });
             return numberingConfig;
         }),
+
     update: AuthMiddleware
         .input(
             z.object({
-                id: z.number(),
-                name: z.string(),
-                prefix: z.string(),
-                description: z.string().nullish(),
-                suffix: z.string(),
-                number: z.number(),
-            })
+                    id: z.number(),
+                    name: z.string().nullish(),
+                    prefix: z.string().nullish(),
+                    paddingZeroNumber: z.number().nullish(),
+                    suffix: z.string().nullable(),
+                }
+            )
         )
-        .query(async ({ ctx, input }) => {
+        .mutation(async ({ ctx, input }) => {
             const numberingConfig = await ctx.prisma.numberingConfig.update({
                 where: {
                     id: input.id,
                 },
                 data: {
-                    name: input.name,
-                    prefix: input.prefix,
-                    description: input.description,
-                    suffix: input.suffix,
-                    number: input.number,
+                    name: input.name ?? undefined,
+                    prefix: input.prefix ?? undefined,
+                    paddingZeroNumber: input.paddingZeroNumber ?? undefined,
+                    suffix: input.suffix ?? undefined,
                 },
             });
-            if (!numberingConfig) new TRPCError({ code: "NOT_FOUND", message: "Department not found" });
+            if (!numberingConfig) new TRPCError({ code: "NOT_FOUND", message: "Numbering Config not found" });
             return numberingConfig;
         }),
     delete: AuthMiddleware
         .input(
-            z.object({
-                id: z.number(),
-            })
+            z.number()
         )
-        .query(async ({ ctx, input }) => {
+        .mutation(async ({ ctx, input }) => {
             const numberingConfig = await ctx.prisma.numberingConfig.delete({
                 where: {
-                    id: input.id,
+                    id: input,
                 },
             });
-            if (!numberingConfig) new TRPCError({ code: "NOT_FOUND", message: "Department not found" });
+            if (!numberingConfig) new TRPCError({ code: "NOT_FOUND", message: "Numbering Config not found" });
             return numberingConfig;
         }),
     getOne: AuthMiddleware

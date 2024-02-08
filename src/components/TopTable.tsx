@@ -6,22 +6,21 @@
 import React, { useMemo, useState } from "react";
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Selection } from "@nextui-org/react";
 import { SearchIcon } from "@nextui-org/shared-icons";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 
-export const TopTable = ({ countData, columns, INITIAL_VISIBLE_COLUMNS }: {
-    countData: number,
+export const TopTable = ({ columns, INITIAL_VISIBLE_COLUMNS, onAdd }: {
     columns: { key: string, label: string, sortable?: boolean, width?: number }[],
-    INITIAL_VISIBLE_COLUMNS: string[]
+    INITIAL_VISIBLE_COLUMNS: string[],
+    onAdd: () => void,
 
 }) => {
-    const [search, setSearch] = useState<string>("");
+    const [search, setSearch] = useState<string|undefined>(undefined);
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
     const headerColumns = React.useMemo(() => {
         if (visibleColumns === "all") return columns;
-
         return columns.filter((column) => Array.from(visibleColumns).includes(column.key));
     }, [visibleColumns]);
-    const RenderContent = useMemo(() => <div className='flex justify-between items-center'>
+    const TopContent = useMemo(() => <div className='flex justify-between items-center'>
             <Input
                 isClearable
                 classNames={{
@@ -37,6 +36,7 @@ export const TopTable = ({ countData, columns, INITIAL_VISIBLE_COLUMNS }: {
                 onValueChange={(value) => setSearch(value)}
             />
             <div className="flex gap-x-3 h-full ">
+                <Button color="primary" onPress={onAdd}> New <PlusIcon/> </Button>
                 <Dropdown>
                     <DropdownTrigger className="hidden sm:flex">
                         <Button
@@ -62,12 +62,11 @@ export const TopTable = ({ countData, columns, INITIAL_VISIBLE_COLUMNS }: {
                         ))}
                     </DropdownMenu>
                 </Dropdown>
-                
             </div>
         </div>
-        , [search, countData,  visibleColumns])
+        , [search, visibleColumns])
     return {
-        RenderContent,
+        TopContent,
         search,
         headerColumns
     }

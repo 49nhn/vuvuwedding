@@ -1,10 +1,11 @@
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter } from "~/server/api/trpc";
 import { AuthMiddleware } from "~/server/middleware/Auth.middleware";
+import { TRPCError } from "@trpc/server";
 
-export const departmentRouter = createTRPCRouter({
+export const roleRouter = createTRPCRouter({
+
     getList: AuthMiddleware
         .input(
             z.object({
@@ -30,7 +31,7 @@ export const departmentRouter = createTRPCRouter({
                     })
                 ) : undefined;
 
-                const departments = await ctx.prisma.department.findMany(
+                const roles = await ctx.prisma.role.findMany(
                     {
                         skip: page * itemPerPage,
                         take: itemPerPage,
@@ -41,62 +42,84 @@ export const departmentRouter = createTRPCRouter({
                             },
                             description: input?.filter?.description ?? undefined,
                         },
+                        include: {
+                            permissions: true,
+                            Users: {
+                                select: {
+                                    id: true,
+                                    username: true,
+                                    fullName: true,
+                                    phone: true,
+                                },
+                            }
+                        },
                         orderBy: sort,
                     });
-                if (!departments) throw new TRPCError({ code: "NOT_FOUND", message: "Department not found" })
+                if (!roles) new TRPCError({ code: "NOT_FOUND", message: "Role not found" });
                 return {
-                    data: departments,
-                    total: await ctx.prisma.department.count(),
+                    items: roles,
+                    total: await ctx.prisma.role.count(),
                     itemPerPage,
                 };
-            }
-        ),
-    update: AuthMiddleware
-        .input(
-            z.object({
-                id: z.number(),
-                name: z.string(),
-                description: z.string(),
-            })
-        )
-        .mutation(async ({ ctx, input }) => {
-                const department = await ctx.prisma.department.update({
-                    where: {
-                        id: input.id,
-                    },
-                    data: {
-                        name: input.name,
-                        description: input.description,
-                    },
-                });
-                if (!department) new TRPCError({ code: "NOT_FOUND", message: "Department not found" });
-                return department;
             }
         ),
     create: AuthMiddleware
         .input(
             z.object({
                 name: z.string(),
-                description: z.string(),
+                description: z.string().nullish(),
+                permissions: z.array(
+                    z.number()
+                ).nullish(),
             })
         )
         .mutation(async ({ ctx, input }) => {
-                const department = await ctx.prisma.department.create({
-                    data: {
-                        name: input.name,
-                        description: input.description,
+            const role = await ctx.prisma.role.create({
+                data: {
+                    name: input.name,
+                    description: input.description,
+                    permissions: {
+                        connect: input.permissions?.map((id) => ({ id: id })) 
                     },
-                });
-                if (!department) new TRPCError({ code: "NOT_FOUND", message: "Department not found" });
-                return department;
-            }
-        ),
+                },
+            });
+            if (!role) new TRPCError({ code: "NOT_FOUND", message: "Role not found" });
+            return role;
+        }),
+    update: AuthMiddleware
+        .input(
+            z.object({
+                    id: z.number(),
+                    name: z.string(),
+                    description: z.string().nullish(),
+                    permissions: z.array(
+                        z.number()
+                    ).nullish(),
+                }
+            )
+        )
+        .mutation(async ({ ctx, input }) => {
+            const role = await ctx.prisma.role.update({
+                where: {
+                    id: input.id,
+                },
+                data: {
+                    name: input.name,
+                    description: input.description,
+                    permissions: {
+                        set: input.permissions?.map((id) => ({ id: id })) 
+                    },
+                },
+            });
+            if (!role) new TRPCError({ code: "NOT_FOUND", message: "Role not found" });
+            return role;
+        }),
     delete: AuthMiddleware
         .input(
             z.number()
         )
         .mutation(async ({ ctx, input }) => {
-                const department = await ctx.prisma.department.delete({
+                const department = await ctx.prisma.role.delete({
                     where: {
                         id: input,
                     },
