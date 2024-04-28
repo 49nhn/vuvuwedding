@@ -48,6 +48,11 @@ const menuItems = [
                 title: "Permission",
                 icon: <AdjustmentsVerticalIcon width="1.5rem"/>,
                 href: "/mdm/permission"
+            }, 
+            {
+                title: "Pack Ancestral",
+                icon: <AdjustmentsVerticalIcon width="1.5rem"/>,
+                href: "/mdm/packAncestral"
             },
         ]
     },

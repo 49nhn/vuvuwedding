@@ -1,26 +1,17 @@
 import type { NextPageWithLayout } from "~/pages/_app";
-import React, { type ReactElement, useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import React, { type ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import MainLayout from "~/layouts/MainLayout";
-import { api } from "~/utils/api";
+import { api, NumberingConfigOutput } from "~/utils/api";
 import { GlobalConfig } from "~/config/GlobalConfig";
 import { NumberingConfig } from '@prisma/client'
-import {
-    Input,
-    type SortDescriptor,
-    Spinner,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow
-} from "@nextui-org/react";
+import { Button, Input, type SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { TopTable } from "~/components/TopTable";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { MyModal } from "~/components/Modal";
 import { BottomTable } from "~/components/BottomTable";
 import { toast } from "react-toastify";
 import AreYouSure from "~/ui/MyPopover"
+import { SubmitHandler, useForm } from "react-hook-form";
 
 const columns = [
     {
@@ -57,14 +48,7 @@ const columns = [
 const INITIAL_VISIBLE_COLUMNS = ["name", "prefix", "paddingZeroNumber", "suffix", "currentNumber", "actions"];
 
 const NumberingConfig: NextPageWithLayout = () => {
-    const [dataPost, setDataPost] = useReducer((state: any, newState: any) => ({ ...state, ...newState }), {
-        id: 0,
-        name: "",
-        prefix: "",
-        paddingZeroNumber: 0,
-        suffix: "",
-        currentNumber: 0
-    });
+
     const [filter] = useState({});
     const [sort, setSort] = useState<{ field: string, order?: "asc" | "desc" | undefined }[]>([]);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({});
@@ -72,7 +56,7 @@ const NumberingConfig: NextPageWithLayout = () => {
         columns,
         INITIAL_VISIBLE_COLUMNS,
         onAdd: () => {
-            setDataPost({
+            reset({
                 id: 0,
                 name: "",
                 prefix: "",
@@ -98,32 +82,62 @@ const NumberingConfig: NextPageWithLayout = () => {
 
     const items = useMemo(() => {
         if (!data) return [];
-        return data?.data ?? []
+        return data?.items ?? []
     }, [data, isError, isLoading]);
 
     useEffect(() => setLength(data?.total ?? 0), [isLoading, isFetching]);
-
-    const { RenderModal, onOpen, isOpen } = MyModal({
-        Content: <div className="flex flex-col w-full  md:flex-nowrap gap-4">
-            <Input label="Name" defaultValue={dataPost?.name}
-                   onValueChange={(value) => setDataPost({ name: value.toString() })}/>
-            <Input label="prefix" defaultValue={dataPost?.prefix as string}
-                   onValueChange={(value) => setDataPost({ prefix: value })}/>
-            <Input label="paddingZeroNumber" type="number" inputMode={"numeric"}
-                   defaultValue={dataPost?.paddingZeroNumber?.toString()}
-                   onValueChange={(value) => setDataPost({ paddingZeroNumber: Number(value) })}/>
-            <Input label="suffix" defaultValue={dataPost?.suffix?.toString() ?? ""}
-                   onValueChange={(value) => setDataPost({ suffix: value })}/>
-        </div>,
-        callBack: async () => {
-            if (dataPost?.id > 0) {
-                await updateItem.mutateAsync(dataPost)
-            } else {
-                await createItem.mutateAsync(dataPost)
-            }
-            toast("Save success", { type: "success", position: "bottom-left" })
-            await refetch()
+    
+    //Region Form
+    const {
+        register,
+        handleSubmit,
+        watch,
+        reset,
+        formState: { errors },
+    } = useForm<NumberingConfigOutput>({
+        criteriaMode: "all",
+    });
+    const onSubmit: SubmitHandler<NumberingConfigOutput> = async (data) => {
+        if (data?.id) {
+            await updateItem.mutateAsync(data).catch((error) => {
+                toast(error.message, { type: "error", position: "bottom-left" })
+                throw new Error(error.message)
+            })
+        } else {
+            await createItem.mutateAsync(data).catch((error) => {
+                toast(error.message, { type: "error", position: "bottom-left" })
+                throw new Error(error.message)
+            })
         }
+        toast("Save success", { type: "success", position: "bottom-left" })
+        await refetch()
+        onClose()
+    };
+
+    const { RenderModal, onOpen, isOpen, onClose } = MyModal({
+        Content: <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full  md:flex-nowrap gap-4">
+            <Input label={<p>Name <span className={"text-danger"}>*</span></p>}  {...register("name", {
+                required: "Name is required",
+            })}
+                   isInvalid={Boolean(errors.name)} errorMessage={errors.name?.message}
+                   value={watch("name")}
+            />
+            <Input label="prefix" {...register("prefix",)} value={watch("prefix") ?? ""}/>
+            <Input label="Padding Zero Number"
+                   {...register("paddingZeroNumber", {
+                       required: "Padding Zero Number is required",
+                       valueAsNumber: true,
+                   })}
+                   type="number"
+                   inputMode={"numeric"}
+                   value={`${watch("paddingZeroNumber")}`}
+            />
+            <Input label="Suffix" {...register("suffix")} value={watch("suffix") ?? ""}/>
+            <div className={"flex items-end justify-end gap-x-3"}>
+                <Button color="default" className={"w-fit item"} onPress={() => onClose()}>Cancel</Button>
+                <Button color="primary" className={"w-fit item"} type="submit">Save</Button>
+            </div>
+        </form>,
     })
     useEffect(() => {
         if (!sortDescriptor.column) return;
@@ -140,7 +154,7 @@ const NumberingConfig: NextPageWithLayout = () => {
                 return (
                     <div className="flex flex-row gap-2">
                         <PencilIcon className="hover:cursor-pointer" onClick={() => {
-                            setDataPost(item);
+                            reset(item);
                             onOpen();
                         }} width={"1.2rem"}/>
                         <AreYouSure
@@ -184,7 +198,7 @@ const NumberingConfig: NextPageWithLayout = () => {
                 </TableHeader>
                 <TableBody items={items} loadingContent={<Spinner label='Loading...'/>} loadingState={loadingState}>
                     {(item) => (
-                        <TableRow key={item.id as number}>
+                        <TableRow key={item.id}>
                             {(columnKey) => <TableCell> {renderCell(item, columnKey)}
                             </TableCell>}
                         </TableRow>

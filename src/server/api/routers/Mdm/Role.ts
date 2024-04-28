@@ -21,7 +21,7 @@ export const roleRouter = createTRPCRouter({
                 )).nullable(),
                 search: z.string().nullish(),
                 itemPerPage: z.number().nullish(),
-            }).nullable()
+            }).nullish()
         )
         .query(async ({ ctx, input }) => {
                 const page = Number(input?.page) - 1 || 0;

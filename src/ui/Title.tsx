@@ -12,7 +12,6 @@ const TitlePage = () => {
     const logout = api.Auth.logout.useMutation();
 
     const handleLogout = () => {
-        console.log('logout');
         logout.mutate();
         logout && setTimeout(() => window.location.assign('/auth/login'), 2e3);
     }

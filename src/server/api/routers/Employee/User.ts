@@ -62,9 +62,9 @@ export const userRouter = createTRPCRouter({
                 const data = users.map((item) => ({
                     ...item,
                     password: '',
-                    birthday: item.birthday?.toLocaleDateString("vi-VN"),
-                    createdAt: item.createdAt?.toISOString().split('T')[0],
-                    deleteAt: item.deletedAt?.toISOString().split('T')[0],
+                    // birthday: item.birthday?.toLocaleDateString("vi-VN"),
+                    // createdAt: item.createdAt?.toISOString().split('T')[0],
+                    // deleteAt: item.deletedAt?.toISOString().split('T')[0],
                 }))
                 return {
                     items: data,
@@ -135,7 +135,7 @@ export const userRouter = createTRPCRouter({
                     salary: input.salary ?? 0,
                     birthday: input.birthday,
                     roles: {
-                        connect: input.roles?.map((item) => ({
+                        set: input.roles?.map((item) => ({
                                 name: item,
                             })
                         ),

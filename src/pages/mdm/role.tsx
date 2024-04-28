@@ -31,7 +31,6 @@ const columns = [
     {
         key: "permissions",
         label: "Permissions",
-        sortable: true,
     },
 ];
 const INITIAL_VISIBLE_COLUMNS = ["name", "description", "permissions", "actions"];
@@ -49,7 +48,6 @@ const Role: NextPageWithLayout = () => {
                 description: "",
                 permissions: []
             });
-            console.log(watch())
             onOpen();
         }
     });
@@ -77,7 +75,7 @@ const Role: NextPageWithLayout = () => {
         return data?.items ?? []
     }, [data, isError, isLoading]);
 
-    useEffect(() => setLength(data?.total ?? 0), [isLoading, isFetching]);
+    useEffect(() => setLength(data?.total ?? 0), [isLoading, isFetching, data]);
 
     // Region Form
     const {

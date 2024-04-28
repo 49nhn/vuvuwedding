@@ -52,7 +52,7 @@ export const numberingConfigRouter = createTRPCRouter({
                     });
                 if (!numberingConfigs) new TRPCError({ code: "NOT_FOUND", message: "Numbering Config not found" });
                 return {
-                    data: numberingConfigs,
+                    items: numberingConfigs,
                     total: await ctx.prisma.numberingConfig.count(),
                     itemPerPage,
                 };

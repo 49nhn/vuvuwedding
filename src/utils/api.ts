@@ -67,6 +67,9 @@ export const api = createTRPCNext<AppRouter>({
  */
 export type RouterInputs = inferRouterInputs<AppRouter>;
 export type RoleInput = RouterInputs["Role"]["update"]
+export type UserInput = RouterInputs["User"]["update"]
+export type PackAncestralInput = RouterInputs["PackAncestral"]["update"]
+export type ShowsInput = RouterInputs["Shows"]["create"]
 
 /**
  * Inference helper for outputs.
@@ -74,5 +77,8 @@ export type RoleInput = RouterInputs["Role"]["update"]
  * @example type HelloOutput = RouterOutputs['example']['hello']
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
-export type UserOutput = RouterOutputs["User"]["getList"]["items"] 
+export type UserOutput = RouterOutputs["User"]["getList"]["items"][0]
+export type AuthOutput = RouterOutputs["Auth"]["me"]
 export type RoleOutput = RouterOutputs["Role"]["getList"]["items"][0]
+export type NumberingConfigOutput = RouterOutputs["NumberingConfig"]["getList"]["items"][0]
+export type ShowsOutput = RouterOutputs["Shows"]["getList"]["items"][0]
