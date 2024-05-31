@@ -123,9 +123,6 @@ const User: NextPageWithLayout = () => {
                    value={`${watch("salary")}`} type="number" inputMode={"numeric"}/>
             <Input label="Birthday" {...register("birthday",
             )}
-                   onValueChange={(value) => {
-                       console.log(watch("birthday"))
-                   }}
                    max={new Date().toISOString().split("T")[0]}
                    min={new Date(1900, 1, 1).toISOString().split("T")[0] ?? ""}
                    value={`${watch("birthday")}`} type="date"/>

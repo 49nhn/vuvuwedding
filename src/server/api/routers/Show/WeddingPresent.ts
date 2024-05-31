@@ -55,10 +55,24 @@ export const weddingPresentRouter = createTRPCRouter({
                     });
                 if (!weddingPresents) throw new TRPCError({ code: "NOT_FOUND", message: "Photos not found" })
                 return {
-                    items:weddingPresents,
+                    items: weddingPresents,
                     total: await ctx.prisma.photo.count(),
                     itemPerPage,
                 };
+            }
+        ),
+    delete: AuthMiddleware
+        .input(
+            z.number()
+        )
+        .mutation(async ({ ctx, input }) => {
+                const decorations = await ctx.prisma.makeup.delete({
+                    where: {
+                        id: input,
+                    },
+                });
+                if (!decorations) new TRPCError({ code: "NOT_FOUND", message: "Shows not found" });
+                return decorations;
             }
         ),
 });    

@@ -13,6 +13,7 @@ import { weddingDressRouter } from "~/server/api/routers/Show/WeddingDress";
 import { weddingFlowerRouter } from "~/server/api/routers/Show/WeddingFlower";
 import { showsRouter } from "~/server/api/routers/Show/Shows";
 import { packAncestralRouter } from "~/server/api/routers/Mdm/PackAncestral";
+import { decorationsRouter } from "~/server/api/routers/Show/Decoration";
 
 /**
  * This is the primary router for your server.
@@ -32,6 +33,7 @@ export const appRouter = createTRPCRouter({
     //Region Shows Rowter
     Shows: showsRouter,
     WeddingPresent: weddingPresentRouter,
+    Decoration: decorationsRouter,
     MakeUp: makeUpRouter,
     WeddingDress: weddingDressRouter,
     WeddingFlower: weddingFlowerRouter,

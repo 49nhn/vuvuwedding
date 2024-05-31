@@ -4,7 +4,8 @@
  */
 
 import React, { useMemo, useState } from "react";
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Selection } from "@nextui-org/react";
+import {  Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Selection } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
 import { SearchIcon } from "@nextui-org/shared-icons";
 import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 

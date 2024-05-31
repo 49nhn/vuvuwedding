@@ -1,10 +1,11 @@
 import AuthLayout from "~/layouts/AuthLayout";
 import { api } from "~/utils/api";
 import { useRouter } from 'next/navigation'
-import { Card, CardBody, CardHeader, Input, Image, Button } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Input, Image } from "@nextui-org/react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/20/solid";
 import React from "react";
 import { toast } from "react-toastify";
+import { Button } from "@nextui-org/button";
 export default function Login() {
     const [isVisible, setIsVisible] = React.useState(false);
     const [username, setUsername] = React.useState("");

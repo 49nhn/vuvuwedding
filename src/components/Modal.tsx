@@ -1,5 +1,5 @@
 import React, { type ReactElement, useMemo } from "react";
-import { ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/modal";
+import { ModalBody, ModalContent, ModalHeader, useDisclosure } from "@nextui-org/modal";
 import { Modal } from "@nextui-org/react";
 
 export const MyModal = ({ Content, title ,option}: {

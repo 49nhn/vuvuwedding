@@ -55,6 +55,13 @@ export const showsRouter = createTRPCRouter({
                             makeups: true,
                             weddingDresses: true,
                             weddingFlowers: true,
+                            salesMan: {
+                                select: {
+                                    id: true,
+                                    phone: true,
+                                    fullName: true,
+                                },
+                            },
                             others: true,
                             _count: {
                                 select: {
@@ -65,7 +72,7 @@ export const showsRouter = createTRPCRouter({
                                     makeups: true,
                                     weddingDresses: true,
                                     weddingFlowers: true,
-                                    others: true
+                                    others: true,
                                 },
                             },
                         },
@@ -94,12 +101,12 @@ export const showsRouter = createTRPCRouter({
                 groomPhone: z.string(),
                 groomAddress: z.string(),
                 otherContact: z.string(),
-                saleManId: z.array(z.number()),
+                salesManId: z.array(z.number()).nullish(),
                 decorations: z.array(z.object({
                     title: z.string(),
                     description: z.string(),
-                    price: z.number(),
-                    dateShowStart: z.string(),
+                    price: z.number().nullish(),
+                    dateShowStart: z.date(),
                     tone_rem: z.string(),
                     tone_hoa: z.string(),
                     so_phong: z.string(),
@@ -116,43 +123,43 @@ export const showsRouter = createTRPCRouter({
                     lung_ghe: z.string(),
                     rap: z.string(),
                     ban_tron: z.string(),
-                    packAncestralId: z.string(),
-                    ceremonyType: z.string(),
+                    packAncestralId: z.number().nullish(),
+                    ceremonyType: z.number().nullish(),
                 })).nullish(),
                 weddingPresents: z.array(z.object({
-                    id: z.number(),
                     title: z.string(),
                     price: z.number(),
                     description: z.string(),
+                    dateShowStart: z.date(),
                 })).nullish(),
                 photos: z.array(z.object({
-                    id: z.number(),
                     title: z.string(),
                     price: z.number(),
+                    dateShowStart: z.date(),
                     description: z.string(),
                 })).nullish(),
                 makeups: z.array(z.object({
-                    id: z.number(),
                     title: z.string(),
                     price: z.number(),
+                    dateShowStart: z.date(),
                     description: z.string(),
                 })).nullish(),
                 weddingDresses: z.array(z.object({
-                    id: z.number(),
                     title: z.string(),
                     price: z.number(),
+                    dateShowStart: z.date(),
                     description: z.string(),
                 })).nullish(),
                 weddingFlowers: z.array(z.object({
-                    id: z.number(),
                     title: z.string(),
                     price: z.number(),
+                    dateShowStart: z.date(),
                     description: z.string(),
                 })).nullish(),
                 others: z.array(z.object({
-                    id: z.number(),
                     title: z.string(),
                     price: z.number(),
+                    dateShowStart: z.date(),
                     description: z.string(),
                 })).nullish(),
             })
@@ -176,7 +183,7 @@ export const showsRouter = createTRPCRouter({
                     groomAddress: input.groomAddress,
                     otherContact: input.otherContact,
                     salesMan: {
-                        connect: input.saleManId.map((item) => ({
+                        connect: input.salesManId?.map((item) => ({
                             id: item,
                         })),
                     },
@@ -184,10 +191,10 @@ export const showsRouter = createTRPCRouter({
                         create: input.decorations?.map((item) => ({
                                 title: item.title,
                                 description: item.description,
-                                price: item.price,
-                                packAncestralId: Number(item.packAncestralId),
-                                ceremonyType: Number(item.ceremonyType),
-                                dateShowStart: new Date(item.dateShowStart),
+                                price: item.price ?? 0,
+                                packAncestralId: item.packAncestralId ?? -1,
+                                ceremonyType: item.ceremonyType ?? -1,
+                                dateShowStart: item.dateShowStart,
                                 tone_rem: item.tone_rem,
                                 tone_hoa: item.tone_hoa,
                                 so_phong: item.so_phong,
@@ -212,6 +219,7 @@ export const showsRouter = createTRPCRouter({
                                 title: item.title,
                                 price: item.price,
                                 description: item.description,
+                                dateShowStart: item.dateShowStart,
                             })
                         ),
                     },
@@ -220,6 +228,7 @@ export const showsRouter = createTRPCRouter({
                                 title: item.title,
                                 price: item.price,
                                 description: item.description,
+                                dateShowStart: item.dateShowStart,
                             })
                         ),
                     },
@@ -228,6 +237,7 @@ export const showsRouter = createTRPCRouter({
                                 title: item.title,
                                 price: item.price,
                                 description: item.description,
+                                dateShowStart: item.dateShowStart,
                             })
                         ),
                     },
@@ -236,6 +246,7 @@ export const showsRouter = createTRPCRouter({
                                 title: item.title,
                                 price: item.price,
                                 description: item.description,
+                                dateShowStart: item.dateShowStart,
                             })
                         ),
                     },
@@ -244,15 +255,16 @@ export const showsRouter = createTRPCRouter({
                                 title: item.title,
                                 price: item.price,
                                 description: item.description,
+                                dateShowStart: item.dateShowStart,
                             })
                         ),
                     },
                     others: {
                         create: input.others?.map((item) => ({
-                                id: item.id,
                                 title: item.title,
                                 price: item.price,
                                 description: item.description,
+                                dateShowStart: item.dateShowStart,
                             })
                         ),
                     },
@@ -267,7 +279,6 @@ export const showsRouter = createTRPCRouter({
                 totalPrice: z.number(),
                 deposits: z.number(),
                 balance: z.number(),
-                flowerGate: z.string(),
                 description: z.string(),
                 brideName: z.string(),
                 bridePhone: z.string(),
@@ -276,15 +287,13 @@ export const showsRouter = createTRPCRouter({
                 groomPhone: z.string(),
                 groomAddress: z.string(),
                 otherContact: z.string(),
-                dateShowStart: z.string(),
-                dateShowEnd: z.string(),
-                saleManId: z.array(z.number()),
+                salesManId: z.array(z.number()).nullish(),
                 decorations: z.array(z.object({
-                    id: z.number(),
+                    id: z.number().nullish(),
                     title: z.string(),
                     description: z.string(),
-                    price: z.number(),
-                    dateShowStart: z.string(),
+                    price: z.number().nullish(),
+                    dateShowStart: z.date(),
                     tone_rem: z.string(),
                     tone_hoa: z.string(),
                     so_phong: z.string(),
@@ -301,44 +310,50 @@ export const showsRouter = createTRPCRouter({
                     lung_ghe: z.string(),
                     rap: z.string(),
                     ban_tron: z.string(),
-                    packAncestralId: z.string(),
-                    ceremonyType: z.string(),
+                    packAncestralId: z.number().nullish(),
+                    ceremonyType: z.number().nullish(),
                 })).nullish(),
                 weddingPresents: z.array(z.object({
-                    id: z.number(),
+                    id: z.number().nullish(),
                     title: z.string(),
                     price: z.number(),
                     description: z.string(),
+                    dateShowStart: z.date(),
                 })).nullish(),
                 photos: z.array(z.object({
-                    id: z.number(),
+                    id: z.number().nullish(),
                     title: z.string(),
                     price: z.number(),
                     description: z.string(),
+                    dateShowStart: z.date(),
                 })).nullish(),
                 makeups: z.array(z.object({
-                    id: z.number(),
+                    id: z.number().nullish(),
                     title: z.string(),
                     price: z.number(),
                     description: z.string(),
+                    dateShowStart: z.date(),
                 })).nullish(),
                 weddingDresses: z.array(z.object({
-                    id: z.number(),
+                    id: z.number().nullish(),
                     title: z.string(),
                     price: z.number(),
                     description: z.string(),
+                    dateShowStart: z.date(),
                 })).nullish(),
                 weddingFlowers: z.array(z.object({
-                    id: z.number(),
+                    id: z.number().nullish(),
                     title: z.string(),
                     price: z.number(),
                     description: z.string(),
+                    dateShowStart: z.date(),
                 })).nullish(),
                 others: z.array(z.object({
-                    id: z.number(),
+                    id: z.number().nullish(),
                     title: z.string(),
                     price: z.number(),
                     description: z.string(),
+                    dateShowStart: z.date(),
                 })).nullish(),
             })
         )
@@ -362,22 +377,22 @@ export const showsRouter = createTRPCRouter({
                         groomAddress: input.groomAddress,
                         otherContact: input.otherContact,
                         salesMan: {
-                            connect: input.saleManId.map((item) => ({
+                            connect: input.salesManId?.map((item) => ({
                                 id: item,
                             })),
                         },
                         decorations: {
                             upsert: input.decorations?.map((item) => ({
                                     where: {
-                                        id: item.id,
+                                        id: item.id ?? -1,
                                     },
                                     update: {
                                         title: item.title,
                                         description: item.description,
-                                        price: item.price,
-                                        packAncestralId: Number(item.packAncestralId),
-                                        ceremonyType: Number(item.ceremonyType),
-                                        dateShowStart: new Date(item.dateShowStart),
+                                        price: item.price ?? 0,
+                                        packAncestralId: item.packAncestralId ?? -1,
+                                        ceremonyType: item.ceremonyType ?? -1,
+                                        dateShowStart: item.dateShowStart,
                                         tone_rem: item.tone_rem,
                                         tone_hoa: item.tone_hoa,
                                         so_phong: item.so_phong,
@@ -398,10 +413,10 @@ export const showsRouter = createTRPCRouter({
                                     create: {
                                         title: item.title,
                                         description: item.description,
-                                        price: item.price,
-                                        packAncestralId: Number(item.packAncestralId),
-                                        ceremonyType: Number(item.ceremonyType),
-                                        dateShowStart: new Date(item.dateShowStart),
+                                        price: item.price ?? 0,
+                                        packAncestralId: item.packAncestralId ?? -1,
+                                        ceremonyType: item.ceremonyType ?? -1,
+                                        dateShowStart: item.dateShowStart,
                                         tone_rem: item.tone_rem,
                                         tone_hoa: item.tone_hoa,
                                         so_phong: item.so_phong,
@@ -425,17 +440,19 @@ export const showsRouter = createTRPCRouter({
                         weddingPresents: {
                             upsert: input.weddingPresents?.map((item) => ({
                                     where: {
-                                        id: item.id,
+                                        id: item.id ?? -1,
                                     },
                                     update: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                     create: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                 })
                             ),
@@ -443,17 +460,19 @@ export const showsRouter = createTRPCRouter({
                         photos: {
                             upsert: input.photos?.map((item) => ({
                                     where: {
-                                        id: item.id,
+                                        id: item.id ?? -1,
                                     },
                                     update: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                     create: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                 })
                             ),
@@ -461,17 +480,19 @@ export const showsRouter = createTRPCRouter({
                         makeups: {
                             upsert: input.makeups?.map((item) => ({
                                     where: {
-                                        id: item.id,
+                                        id: item.id ?? -1,
                                     },
                                     update: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                     create: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                 })
                             ),
@@ -479,17 +500,19 @@ export const showsRouter = createTRPCRouter({
                         weddingDresses: {
                             upsert: input.weddingDresses?.map((item) => ({
                                     where: {
-                                        id: item.id,
+                                        id: item.id ?? -1,
                                     },
                                     update: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                     create: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                 })
                             ),
@@ -497,17 +520,19 @@ export const showsRouter = createTRPCRouter({
                         weddingFlowers: {
                             upsert: input.weddingFlowers?.map((item) => ({
                                     where: {
-                                        id: item.id,
+                                        id: item.id ?? -1,
                                     },
                                     update: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                     create: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                 })
                             ),
@@ -515,17 +540,19 @@ export const showsRouter = createTRPCRouter({
                         others: {
                             upsert: input.others?.map((item) => ({
                                     where: {
-                                        id: item.id,
+                                        id: item.id ?? -1,
                                     },
                                     update: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                     create: {
                                         title: item.title,
                                         price: item.price,
                                         description: item.description,
+                                        dateShowStart: item.dateShowStart,
                                     },
                                 })
                             ),

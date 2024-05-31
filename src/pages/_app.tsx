@@ -4,9 +4,6 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { type NextPage } from "next";
 import { type ReactElement, type ReactNode } from "react";
-import MainLayout from "~/layouts/MainLayout";
-import Page from "~/pages/index";
-
 
 export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
     getLayout?: (page: ReactElement) => ReactNode

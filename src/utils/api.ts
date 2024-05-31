@@ -69,7 +69,7 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
 export type RoleInput = RouterInputs["Role"]["update"]
 export type UserInput = RouterInputs["User"]["update"]
 export type PackAncestralInput = RouterInputs["PackAncestral"]["update"]
-export type ShowsInput = RouterInputs["Shows"]["create"]
+export type ShowsInput = RouterInputs["Shows"]["update"]
 
 /**
  * Inference helper for outputs.

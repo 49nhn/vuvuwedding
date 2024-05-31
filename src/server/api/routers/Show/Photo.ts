@@ -61,5 +61,19 @@ export const photoRouter = createTRPCRouter({
                 };
             }
         ),
+    delete: AuthMiddleware
+        .input(
+            z.number()
+        )
+        .mutation(async ({ ctx, input }) => {
+                const decorations = await ctx.prisma.photo.delete({
+                    where: {
+                        id: input,
+                    },
+                });
+                if (!decorations) new TRPCError({ code: "NOT_FOUND", message: "Shows not found" });
+                return decorations;
+            }
+        ),
 });    
     
