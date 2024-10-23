@@ -515,25 +515,23 @@ const All: NextPageWithLayout = () => {
                     }}>
                         <Tab key="decorations"
                              title={<div className="flex items-center gap-2" color="danger">Decorations
-                                 <Chip size="sm" variant="faded">{watch("_count.decorations") ?? 0}</Chip>
+                                 <Chip size="sm" variant="faded">{countRender.decorations.length ?? 0}</Chip>
                              </div>}>
                             <Card>
                                 <CardBody>
                                     {RenderFormDecorations()}
-                                    <Button color="primary" onClick={() => {
+                                    <Button color="primary" onClick={() =>
                                         setCountRender({
                                             type: "decorations",
                                             value: [...countRender.decorations, (countRender.decorations[countRender.decorations.length - 1] ?? 0) + 1]
-                                        })
-
-                                    }}
+                                        })}
                                             className={"w-fit mt-2"}><PlusIcon/> </Button>
                                 </CardBody>
                             </Card>
                         </Tab>
                         <Tab key="photos" title={
                             <div className="flex items-center gap-2" color="danger">Photos
-                                <Chip size="sm" variant="faded">{watch("_count.photos") ?? 0}</Chip>
+                                <Chip size="sm" variant="faded">{countRender.photos.length ?? 0}</Chip>
                             </div>
                         }>
                             <Card>
@@ -553,18 +551,17 @@ const All: NextPageWithLayout = () => {
                         </Tab>
                         <Tab key="weddingPresents" title={
                             <div className="flex items-center gap-2" color="danger">Wedding Presents
-                                <Chip size="sm" variant="faded">{watch("_count.weddingPresents") ?? 0}</Chip>
+                                <Chip size="sm" variant="faded">{countRender.weddingPresents.length ?? 0}</Chip>
                             </div>
                         }>
                             <Card>
                                 <CardBody>
                                     {RenderTabForm("weddingPresents")}
-                                    <Button color="primary" onClick={() => {
+                                    <Button color="primary" onClick={() =>
                                         setCountRender({
                                             type: "weddingPresents",
                                             value: [...countRender.weddingPresents, (countRender.weddingPresents[countRender.weddingPresents.length - 1] ?? 0) + 1]
-                                        })
-                                    }}
+                                        })}
                                             className={"w-fit mt-2"}><PlusIcon/> </Button>
                                 </CardBody>
                             </Card>
@@ -572,72 +569,68 @@ const All: NextPageWithLayout = () => {
 
                         <Tab key="makeups" title={
                             <div className="flex items-center gap-2" color="danger">Make Up
-                                <Chip size="sm" variant="faded">{watch("_count.makeups") ?? 0}</Chip>
+                                <Chip size="sm" variant="faded">{countRender.makeups.length ?? 0}</Chip>
                             </div>
                         }>
                             <Card>
                                 <CardBody>
                                     {RenderTabForm("makeups")}
-                                    <Button color="primary" onClick={() => {
+                                    <Button color="primary" onClick={() =>
                                         setCountRender({
                                             type: "makeups",
                                             value: [...countRender.makeups, (countRender.makeups[countRender.makeups.length - 1] ?? 0) + 1]
-                                        })
-                                    }}
+                                        })}
                                             className={"w-fit mt-2"}><PlusIcon/> </Button>
                                 </CardBody>
                             </Card>
                         </Tab>
                         <Tab key="weddingDresses" title={
                             <div className="flex items-center gap-2" color="danger">Wedding Dress
-                                <Chip size="sm" variant="faded">{watch("_count.weddingDresses") ?? 0}</Chip>
+                                <Chip size="sm" variant="faded">{countRender.weddingDresses.length ?? 0}</Chip>
                             </div>
                         }>
                             <Card>
                                 <CardBody>
                                     {RenderTabForm("weddingDresses")}
-                                    <Button color="primary" onClick={() => {
+                                    <Button color="primary" onClick={() =>
                                         setCountRender({
                                             type: "weddingDresses",
                                             value: [...countRender.weddingDresses, (countRender.weddingDresses[countRender.weddingDresses.length - 1] ?? 0) + 1]
-                                        })
-                                    }}
+                                        })}
                                             className={"w-fit mt-2"}><PlusIcon/> </Button>
                                 </CardBody>
                             </Card>
                         </Tab>
                         <Tab key="weddingFlower" title={
                             <div className="flex items-center gap-2" color="danger">Wedding Flower
-                                <Chip size="sm" variant="faded">{watch("_count.weddingFlowers") ?? 0}</Chip>
+                                <Chip size="sm" variant="faded">{countRender.weddingFlowers.length ?? 0}</Chip>
                             </div>
                         }>
                             <Card>
                                 <CardBody>
                                     {RenderTabForm("weddingFlowers")}
-                                    <Button color="primary" onClick={() => {
+                                    <Button color="primary" onClick={() =>
                                         setCountRender({
                                             type: "weddingFlowers",
                                             value: [...countRender.weddingFlowers, (countRender.weddingFlowers[countRender.weddingFlowers.length - 1] ?? 0) + 1]
-                                        })
-                                    }}
+                                        })}
                                             className={"w-fit mt-2"}><PlusIcon/> </Button>
                                 </CardBody>
                             </Card>
                         </Tab>
                         <Tab key="others" title={
                             <div className="flex items-center gap-2" color="danger">Others
-                                <Chip size="sm" variant="faded">{watch("_count.others") ?? 0}</Chip>
+                                <Chip size="sm" variant="faded">{countRender.others.length ?? 0}</Chip>
                             </div>
                         }>
                             <Card>
                                 <CardBody>
                                     {RenderTabForm("others")}
-                                    <Button color="primary" onClick={() => {
+                                    <Button color="primary" onClick={() =>
                                         setCountRender({
                                             type: "others",
                                             value: [...countRender.others, (countRender.others[countRender.others.length - 1] ?? 0) + 1]
-                                        })
-                                    }}
+                                        })}
                                             className={"w-fit mt-2"}><PlusIcon/> </Button>
                                 </CardBody>
                             </Card>
@@ -665,8 +658,7 @@ const All: NextPageWithLayout = () => {
             order: sortDescriptor.direction === "ascending" ? "asc" : "desc"
         }]);
     }, [sortDescriptor]);
-
-    //Region Table
+    
     const renderCell = useCallback((item: ShowsOutput, columnKey: React.Key): ReactNode => {
         if (!item) return;
         const cellValue = item[columnKey as keyof ShowsOutput];
@@ -676,24 +668,6 @@ const All: NextPageWithLayout = () => {
                     <div className="flex flex-row gap-2">
                         <PencilIcon className="hover:cursor-pointer" onClick={(e) => {
                             e.defaultPrevented = false;
-                            // const type = [
-                            //     "salesMan",
-                            //     "decorations",
-                            //     "photos",
-                            //     "weddingPresents",
-                            //     "makeups",
-                            //     "weddingDresses",
-                            //     "weddingFlowers",
-                            //     "others",
-                            //     "decor",]
-                            // type.forEach((e)=>{
-                            //
-                            //     let length= item._count.decorations
-                            //     setCountRender({
-                            //         type: e,
-                            //         value: Array.from({ length: item._count[e] }).map((_, index) => index)
-                            //     })
-                            // })
                             setCountRender({
                                 type: "photos",
                                 value: Array.from({ length: item._count.photos }).map((_, index) => index)
@@ -719,8 +693,8 @@ const All: NextPageWithLayout = () => {
                                 value: Array.from({ length: item._count.others }).map((_, index) => index)
                             })
                             setCountRender({
-                                type: "decor",
-                                value: Array.from({ length: item._count.photos }).map((_, index) => index)
+                                type: "decorations",
+                                value: Array.from({ length: item._count.decorations }).map((_, index) => index)
                             })
                             // @ts-ignore
                             reset({
@@ -743,7 +717,7 @@ const All: NextPageWithLayout = () => {
             case "salesMan":
                 return item.salesMan.map((item) => item.fullName).join(", ")
             case "book":
-                return item.decorations.map((item) => item.title).join(", ")
+                return item.decorations?.map((item) => item.title).join(", ")
             case "date":
                 return new Date(cellValue as string).toLocaleDateString()
             default:

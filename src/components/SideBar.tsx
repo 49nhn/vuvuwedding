@@ -151,7 +151,6 @@ const menuItems = [
             },
         ]
     }
-
 ]
 export const Sidebar = () => {
     const [isCollapsed, setCollapsed] = useState(true);

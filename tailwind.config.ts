@@ -13,3 +13,6 @@ export default {
   darkMode: ['class', '[data-mode="dark"]'],
   plugins: [require("@tailwindcss/typography"), nextui()],
 } satisfies Config;
+
+import { withUt } from "uploadthing/tw";
+

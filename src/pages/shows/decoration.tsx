@@ -80,7 +80,7 @@ const Decoration: NextPageWithLayout = () => {
         return data?.items ?? []
     }, [data, isError, isLoading]);
 
-    useEffect(() => setLength(data?.total ?? 0), [isLoading, isFetching]);
+    // useEffect(() => setLength(data?.total ?? 0), [isLoading, isFetching]);
     const { RenderModal, onOpen, isOpen, onClose } = MyModal({
         Content: <form>
         </form>,

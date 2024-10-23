@@ -28,7 +28,6 @@ const MainLayout = ({ children, title = "" }: Layout) => {
     //
     return (
         <>
-
             <Head>
                 <title>{pageTitle}</title>
                 <link rel="icon" href="/favicon.ico"/>
