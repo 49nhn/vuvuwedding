@@ -3,7 +3,7 @@ import React, { type ReactElement, ReactNode, useCallback, useEffect, useMemo, u
 import MainLayout from "~/layouts/MainLayout";
 import { api, RoleInput, RoleOutput } from "~/utils/api";
 import { GlobalConfig } from "~/config/GlobalConfig";
-import { Button, Input, Select, SelectItem, type SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import {  Input, Select, SelectItem, type SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { TopTable } from "~/components/TopTable";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { MyModal } from "~/components/Modal";
@@ -11,6 +11,7 @@ import { BottomTable } from "~/components/BottomTable";
 import { toast } from "react-toastify";
 import AreYouSure from "~/ui/MyPopover"
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Button } from "@nextui-org/button";
 
 const columns = [
     {
@@ -121,7 +122,7 @@ const Role: NextPageWithLayout = () => {
                     placeholder="Select a permission..."
                     selectionMode="multiple"
                     onSelectionChange={(value) => {
-                        const permissions = Array.from(value).map((permission) => parseInt(permission.toString()) as number)
+                        const permissions = Array.from(value).map((permission) => permission.toString())
                         setValue("permissions", permissions)
                     }}
                     selectedKeys={watch("permissions")?.map((permission) => permission.toString())}
@@ -198,7 +199,7 @@ const Role: NextPageWithLayout = () => {
                 </TableHeader>
                 <TableBody items={items} loadingContent={<Spinner label='Loading...'/>} loadingState={loadingState}>
                     {(item) => (
-                        <TableRow key={item.id as number}>
+                        <TableRow key={item.id}>
                             {(columnKey) => <TableCell> {renderCell(item, columnKey)}
                             </TableCell>}
                         </TableRow>

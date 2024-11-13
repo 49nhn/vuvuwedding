@@ -112,7 +112,7 @@ export const userRouter = createTRPCRouter({
     update: AuthMiddleware
         .input(
             z.object({
-                id: z.number(),
+                id: z.string(),
                 fullName: z.string().nullish(),
                 email: z.string().nullish(),
                 phone: z.string().nullish(),
@@ -150,7 +150,7 @@ export const userRouter = createTRPCRouter({
         }),
     delete: AuthMiddleware
         .input(
-            z.number(),
+            z.string(),
         )
         .mutation(async ({ ctx, input }) => {
             const user = await ctx.prisma.user.delete({

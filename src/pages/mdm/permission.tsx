@@ -1,26 +1,18 @@
 import type { NextPageWithLayout } from "~/pages/_app";
-import React, { type ReactElement, useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import React, { type ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import MainLayout from "~/layouts/MainLayout";
-import { api } from "~/utils/api";
+import { api, PermissionInput } from "~/utils/api";
 import { GlobalConfig } from "~/config/GlobalConfig";
-import { Permission } from '@prisma/client'
-import {
-    Input,
-    type SortDescriptor,
-    Spinner,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow
-} from "@nextui-org/react";
+import { type Permission } from '@prisma/client'
+import { Input, type SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { TopTable } from "~/components/TopTable";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { MyModal } from "~/components/Modal";
 import { BottomTable } from "~/components/BottomTable";
 import { toast } from "react-toastify";
 import AreYouSure from "~/ui/MyPopover"
+import { Button } from "@nextui-org/button";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 const columns = [
     {
@@ -33,11 +25,15 @@ const columns = [
         label: "Name",
         sortable: true,
     },
+    {
+        key: "description",
+        label: "Description",
+        sortable: true,
+    },
 ];
 const INITIAL_VISIBLE_COLUMNS = ["name", "description", "permissions", "actions"];
 
 const Permission: NextPageWithLayout = () => {
-    const [dataPost, setDataPost] = useReducer((state: any, newState: any) => ({ ...state, ...newState }), {});
     const [filter] = useState({});
     const [sort, setSort] = useState<{ field: string, order?: "asc" | "desc" | undefined }[]>([]);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({});
@@ -45,10 +41,10 @@ const Permission: NextPageWithLayout = () => {
         columns,
         INITIAL_VISIBLE_COLUMNS,
         onAdd: () => {
-            setDataPost({
+            reset({
                 id: undefined,
                 name: "",
-            })
+            });
             onOpen();
         }
     });
@@ -64,7 +60,31 @@ const Permission: NextPageWithLayout = () => {
         filter,
         sort
     }, GlobalConfig.tanstackOption)
-
+    const {
+        register,
+        handleSubmit,
+        watch,
+        reset,
+        formState: { errors },
+    } = useForm<PermissionInput>({
+        criteriaMode: "all",
+    });
+    const onSubmit: SubmitHandler<PermissionInput> = async (data) => {
+        if (data?.id) {
+            await updateItem.mutateAsync(data).catch((error) => {
+                toast(error.message, { type: "error", position: "bottom-left" })
+                throw new Error(error.message)
+            })
+        } else {
+            await createItem.mutateAsync(data).catch((error) => {
+                toast(error.message, { type: "error", position: "bottom-left" })
+                throw new Error(error.message)
+            })
+        }
+        toast("Save success", { type: "success", position: "bottom-left" })
+        await refetch()
+        onClose()
+    };
     const items = useMemo(() => {
         if (!data) return [];
         return data?.items ?? []
@@ -72,20 +92,20 @@ const Permission: NextPageWithLayout = () => {
 
     useEffect(() => setLength(data?.total ?? 0), [isLoading, isFetching]);
 
-    const { RenderModal, onOpen, isOpen } = MyModal({
-        Content: <div className="flex flex-col w-full  md:flex-nowrap gap-4">
-            <Input label="Name" defaultValue={dataPost?.name}
-                   onValueChange={(value) => setDataPost({ name: value })}/>
-        </div>,
-        callBack: async () => {
-            if (dataPost?.id) {
-                await updateItem.mutateAsync(dataPost)
-            } else {
-                await createItem.mutateAsync(dataPost)
-            }
-            toast("Save success", { type: "success", position: "bottom-left" })
-            await refetch()
-        }
+    const { RenderModal, onOpen, isOpen, onClose } = MyModal({
+        title: "Permission",
+        Content: <form className="flex flex-col w-full  md:flex-nowrap gap-4" onSubmit={handleSubmit(onSubmit)}>
+            <Input label={<p>Name <span className={"text-danger"}>*</span></p>}
+                   {...register("name", {
+                       required: "Name is required",
+                   })}
+                   isInvalid={Boolean(errors.name)} errorMessage={errors.name?.message}
+                   value={watch("name")}/>
+            <div className={"flex items-end justify-end gap-x-3"}>
+                <Button color="default" className={"w-fit item"} onPress={() => onClose()}>Cancel</Button>
+                <Button color="primary" className={"w-fit item"} type="submit">Save</Button>
+            </div>
+        </form>,
     })
     useEffect(() => {
         if (!sortDescriptor.column) return;
@@ -102,7 +122,10 @@ const Permission: NextPageWithLayout = () => {
                 return (
                     <div className="flex flex-row gap-2">
                         <PencilIcon className="hover:cursor-pointer" onClick={() => {
-                            setDataPost(item);
+                            reset({
+                                id: item.id,
+                                name: item.name,
+                            });
                             onOpen();
                         }} width={"1.2rem"}/>
                         <AreYouSure
@@ -146,7 +169,7 @@ const Permission: NextPageWithLayout = () => {
                 </TableHeader>
                 <TableBody items={items} loadingContent={<Spinner label='Loading...'/>} loadingState={loadingState}>
                     {(item) => (
-                        <TableRow key={item.id as number}>
+                        <TableRow key={item.id}>
                             {(columnKey) => <TableCell> {renderCell(item, columnKey)}
                             </TableCell>}
                         </TableRow>

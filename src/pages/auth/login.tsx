@@ -36,7 +36,7 @@ export default function Login() {
         <AuthLayout>
             <Card isBlurred radius="lg" className="border-none min-w-[22em] w-[25rem] bg-gray-900/40   min-h-[20rem]">
                 <CardHeader className="w-full flex justify-center" > <Image src="/images/logo-vuvu.png" className="h-[3rem]" alt="vuvuweding"></Image> </CardHeader>
-                <CardBody className="bg-gradient-to-r text-base from-sky-900/40 to-indigo-900/40 h-full flex items-center justify-center" >
+                <CardBody className="bg-gradient-to-r text-white from-sky-900/40 to-indigo-900/40 h-full flex items-center justify-center" >
                     <form className=""   >
                         {login.error && <div className="bg-red-500 text-white p-1 my-2 ">
                             {login.error?.message}
@@ -51,8 +51,8 @@ export default function Login() {
                             type="text"
                             onChange={(e) => setUsername(e.target.value)}
                             onClear={() => console.log("input cleared")}
-                            classNames={{ input: "w-38", label: "text-white" }}
-                            className="pb-4 "
+                            classNames={{ input: "w-38 text-white", label: "text-white" }}
+                            className="pb-4 text-white "
                         />
                         <Input
                             label="Password:"
@@ -71,8 +71,8 @@ export default function Login() {
                                 </button>
                             }
                             type={isVisible ? "text" : "password"}
-                            className="max-w-xs pb-4"
-                            classNames={{ input: "max-w-xs", label: "text-white" }}
+                            className="max-w-xs pb-4 text-white"
+                            classNames={{ input: "max-w-xs text-white", label: "text-white" }}
                         />
                         <div className="flex justify-center">
                             {

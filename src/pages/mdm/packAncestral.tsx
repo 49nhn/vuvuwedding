@@ -3,7 +3,7 @@ import React, { type ReactElement, useCallback, useEffect, useMemo, useState } f
 import MainLayout from "~/layouts/MainLayout";
 import { api, PackAncestralInput } from "~/utils/api";
 import { GlobalConfig } from "~/config/GlobalConfig";
-import { PackAncestral } from '@prisma/client'
+import { type PackAncestral } from '@prisma/client'
 import { Button, Input, Select, SelectItem, type SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { TopTable } from "~/components/TopTable";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";

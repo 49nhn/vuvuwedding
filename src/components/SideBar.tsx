@@ -154,11 +154,11 @@ const menuItems = [
 ]
 export const Sidebar = () => {
     const [isCollapsed, setCollapsed] = useState(true);
-    const renderMenuItems = () =>
+    let renderMenuItems = () =>
         menuItems.map((item, index) => {
             if (item.subMenu) {
                 return (
-                    <ListboxItem key={index} className="h-auto py-0">
+                    <ListboxItem key={index} textValue={item.title} className="h-auto py-0">
                         {
                             isCollapsed ? <Accordion isCompact selectionMode={"single"} itemClasses={{
                                 base: "py-0 w-full",
@@ -169,8 +169,9 @@ export const Sidebar = () => {
                                                title={item.title}>
                                     {item.subMenu.map((subItem, index) => (
                                         <Listbox key={index}
+                                                 aria-label={subItem.title}
                                                  className="flex flex-col gap-0 divide-y divide-default-300/50 dark:divide-default-100/80 overflow-visible">
-                                            <ListboxItem key={index} className='z-10 '>
+                                            <ListboxItem textValue={subItem.title} key={index} className='z-10 '>
                                                 <Link
                                                     className={classNames(isCollapsed ? '' : 'justify-center', 'flex items-center  ')}
                                                     href={subItem.href}>
@@ -190,7 +191,7 @@ export const Sidebar = () => {
                                 <PopoverContent className="bg-cyan-100/80 dark:bg-blue-950/50">
                                     <Listbox className="w-full ">
                                         {item.subMenu.map((subItem, index) => (
-                                            <ListboxItem key={index} className="w-full">
+                                            <ListboxItem key={index} textValue={subItem.title} className="w-full" title={subItem.title}>
                                                 <Link className='flex items-center '
                                                       href={subItem.href}>
                                                     {item.icon}
@@ -207,7 +208,7 @@ export const Sidebar = () => {
                 )
             } else {
                 return (
-                    <ListboxItem key={index} className='z-10 '>
+                    <ListboxItem key={index} textValue={item.title} className='z-10 '>
                         <Link
                             className={classNames(isCollapsed ? '' : 'justify-center', 'flex items-center gap-x-2 ps-1')}
                             href={item.href}>
@@ -216,7 +217,7 @@ export const Sidebar = () => {
                     </ListboxItem>
                 )
             }
-        })
+        });
     return (
         <div className="max-h-screen">
             <div className=' z-10 relative border-b-blue-900  '>
@@ -235,10 +236,13 @@ export const Sidebar = () => {
             <ScrollShadow className={" w-full relative shadow-small bg-cyan-100/20 dark:bg-blue-950/5 rounded-r-medium"} hideScrollBar>
                 <Listbox selectionMode="none"
                          aria-label="Role Menu"
+                         title="Role Menu"
                          className={classNames(isCollapsed ? "w-64" : "w-16 ", " h-[91vh] flex flex-col    p-0 gap-0 divide-y divide-default-300/50 dark:divide-default-100/80 overflow-visible")}
                          itemClasses={{
                              base: "px-3 first:rounded-t-medium last:rounded-b-medium rounded-none gap-3 h-12 data-[hover=true]:bg-default-100/20",
-                         }}>
+                         }}
+                         
+                >
                     {renderMenuItems()}
                 </Listbox>
             </ScrollShadow>

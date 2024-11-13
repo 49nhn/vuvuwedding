@@ -69,7 +69,7 @@ export const roleRouter = createTRPCRouter({
                 name: z.string(),
                 description: z.string().nullish(),
                 permissions: z.array(
-                    z.number()
+                    z.string()
                 ).nullish(),
             })
         )
@@ -89,11 +89,11 @@ export const roleRouter = createTRPCRouter({
     update: AuthMiddleware
         .input(
             z.object({
-                    id: z.number(),
+                    id: z.string(),
                     name: z.string(),
                     description: z.string().nullish(),
                     permissions: z.array(
-                        z.number()
+                        z.string()
                     ).nullish(),
                 }
             )
@@ -116,7 +116,7 @@ export const roleRouter = createTRPCRouter({
         }),
     delete: AuthMiddleware
         .input(
-            z.number()
+            z.string()
         )
         .mutation(async ({ ctx, input }) => {
                 const department = await ctx.prisma.role.delete({

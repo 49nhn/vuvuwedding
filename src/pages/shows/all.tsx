@@ -226,7 +226,7 @@ const All: NextPageWithLayout = () => {
                                         selectedKeys={[`${watch(`decorations.${index}.packAncestralId`)}`]}
                                         items={packAncestral}
                                         onSelectionChange={(value) =>
-                                            setValue(`decorations.${index}.packAncestralId`, Array.from(value).map((item) => Number(item))[0] ?? 0)}
+                                            setValue(`decorations.${index}.packAncestralId`, Array.from(value).map((item) => String(item))[0] )}
                                     >
                                         {item =>
                                             <SelectItem key={item.id} value={item.id}>
@@ -326,7 +326,7 @@ const All: NextPageWithLayout = () => {
                                             await removeMakeUp.mutateAsync(Number(watch(`${type}.${index}.id`)));
                                             break
                                         case "photos":
-                                            await removePhoto.mutateAsync(Number(watch(`${type}.${index}.id`)));
+                                            await removePhoto.mutateAsync(watch(`${type}.${index}.id`) as string);
                                             break
                                         case "others":
                                             await removeOther.mutateAsync(Number(watch(`${type}.${index}.id`)));
@@ -433,7 +433,7 @@ const All: NextPageWithLayout = () => {
                             isInvalid={Boolean(errors.salesManId?.message && errors.salesManId)}
                             defaultSelectedKeys={watch("salesMan")?.map((item) => `${item.id}`) ?? []}
                             items={salesMan}
-                            onSelectionChange={(value) => setValue("salesManId", Array.from(value).map((item) => Number(item)))}
+                            onSelectionChange={(value) => setValue("salesManId", Array.from(value).map((item) => String(item)))}
                             errorMessage={errors.salesManId?.message}>
                         {item =>
                             <SelectItem key={item.id} value={item.id}>
@@ -707,7 +707,7 @@ const All: NextPageWithLayout = () => {
                             button={<TrashIcon className="hover:cursor-pointer text-danger" width={"1.2rem"}/>}
                             message={`Are you sure delete "${item.title}"?`}
                             onConfirmPopover={async () => {
-                                await deleteItem.mutateAsync(Number(item.id));
+                                await deleteItem.mutateAsync(item.id);
                                 toast("Delete success", { type: "success", position: "bottom-left" })
                                 await refetch()
                             }}

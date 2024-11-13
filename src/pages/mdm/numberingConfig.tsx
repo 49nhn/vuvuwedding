@@ -3,8 +3,7 @@ import React, { type ReactElement, useCallback, useEffect, useMemo, useState } f
 import MainLayout from "~/layouts/MainLayout";
 import { api, NumberingConfigOutput } from "~/utils/api";
 import { GlobalConfig } from "~/config/GlobalConfig";
-import { NumberingConfig } from '@prisma/client'
-import { Button, Input, type SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { Input, type SortDescriptor, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { TopTable } from "~/components/TopTable";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { MyModal } from "~/components/Modal";
@@ -12,6 +11,8 @@ import { BottomTable } from "~/components/BottomTable";
 import { toast } from "react-toastify";
 import AreYouSure from "~/ui/MyPopover"
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Button } from "@nextui-org/button";
+import {type NumberingConfig } from "@prisma/client";
 
 const columns = [
     {
@@ -57,7 +58,6 @@ const NumberingConfig: NextPageWithLayout = () => {
         INITIAL_VISIBLE_COLUMNS,
         onAdd: () => {
             reset({
-                id: 0,
                 name: "",
                 prefix: "",
                 paddingZeroNumber: 0,
@@ -86,7 +86,7 @@ const NumberingConfig: NextPageWithLayout = () => {
     }, [data, isError, isLoading]);
 
     useEffect(() => setLength(data?.total ?? 0), [isLoading, isFetching]);
-    
+
     //Region Form
     const {
         register,

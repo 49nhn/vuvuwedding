@@ -72,7 +72,7 @@ export const permissionRouter = createTRPCRouter({
     update: AuthMiddleware
         .input(
             z.object({
-                id: z.number(),
+                id: z.string(),
                 name: z.string(),
             })
         )
@@ -90,7 +90,7 @@ export const permissionRouter = createTRPCRouter({
         }),
     delete: AuthMiddleware
         .input(
-            z.number(),
+            z.string(),
         )
         .mutation(async ({ ctx, input }) => {
             const permission = await ctx.prisma.permission.delete({

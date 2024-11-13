@@ -62,7 +62,7 @@ export const decorationsRouter = createTRPCRouter({
 
     delete: AuthMiddleware
         .input(
-            z.number()
+            z.string()
         )
         .mutation(async ({ ctx, input }) => {
                 const decorations = await ctx.prisma.decoration.delete({

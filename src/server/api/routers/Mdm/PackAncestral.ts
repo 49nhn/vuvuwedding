@@ -75,7 +75,7 @@ export const packAncestralRouter = createTRPCRouter({
     update: AuthMiddleware
         .input(
             z.object({
-                id: z.number(),
+                id: z.string(),
                 name: z.string(),
                 flowerGateType: z.number(),
                 flower : z.number(),
@@ -103,7 +103,7 @@ export const packAncestralRouter = createTRPCRouter({
         }),
     delete: AuthMiddleware
         .input(
-            z.number(),
+            z.string(),
         )
         .mutation(async ({ ctx, input }) => {
             const packAncestral = await ctx.prisma.packAncestral.delete({

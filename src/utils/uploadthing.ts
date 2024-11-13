@@ -10,5 +10,7 @@ import {
 
 import type { OurFileRouter } from "~/server/uploadthing";
 
-export const UploadButton = generateUploadButton<OurFileRouter>();
+export const UploadButton = generateUploadButton<OurFileRouter>(
+    
+);
 export const UploadDropzone = generateUploadDropzone<OurFileRouter>();

@@ -84,7 +84,7 @@ export const numberingConfigRouter = createTRPCRouter({
     update: AuthMiddleware
         .input(
             z.object({
-                    id: z.number(),
+                    id: z.string(),
                     name: z.string().nullish(),
                     prefix: z.string().nullish(),
                     paddingZeroNumber: z.number().nullish(),
@@ -109,7 +109,7 @@ export const numberingConfigRouter = createTRPCRouter({
         }),
     delete: AuthMiddleware
         .input(
-            z.number()
+            z.string()
         )
         .mutation(async ({ ctx, input }) => {
             const numberingConfig = await ctx.prisma.numberingConfig.delete({
@@ -123,7 +123,7 @@ export const numberingConfigRouter = createTRPCRouter({
     getOne: AuthMiddleware
         .input(
             z.object({
-                id: z.number(),
+                id: z.string(),
             })
         )
         .query(async ({ ctx, input }) => {

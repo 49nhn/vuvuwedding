@@ -181,7 +181,10 @@ const User: NextPageWithLayout = () => {
                             button={<TrashIcon className="hover:cursor-pointer text-danger" width={"1.2rem"}/>}
                             message={`Are you sure delete "${item.username}"?`}
                             onConfirmPopover={async () => {
-                                await deleteItem.mutateAsync(Number(item.id));
+                                await deleteItem.mutateAsync(item.id).catch((error) => {
+                                    toast(error.message, { type: "error", position: "bottom-left" })
+                                    throw new Error(error.message)
+                                });
                                 toast("Delete success", { type: "success", position: "bottom-left" })
                                 await refetch()
                             }}

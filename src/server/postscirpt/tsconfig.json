@@ -3,9 +3,10 @@
     "target": "ES2015",
     "module": "commonjs",
     "strict": true,
-    "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Recommended"
