@@ -312,6 +312,12 @@ export const showsRouter = createTRPCRouter({
                     ban_tron: z.string(),
                     packAncestralId: z.string().nullish(),
                     ceremonyType: z.number().nullish(),
+                    image:z.array(
+                        z.object({
+                            id: z.string().nullish(),
+                            url: z.string(),
+                        })
+                    ),
                 })).nullish(),
                 weddingPresents: z.array(z.object({
                     id: z.string().nullish(),
@@ -358,7 +364,8 @@ export const showsRouter = createTRPCRouter({
             })
         )
         .mutation(async ({ ctx, input }) => {
-                const shows = await ctx.prisma.shows.update({
+                // @ts-ignore
+            const shows = await ctx.prisma.shows.update({
                     where: {
                         id: input.id,
                     },
@@ -409,12 +416,25 @@ export const showsRouter = createTRPCRouter({
                                         lung_ghe: item.lung_ghe,
                                         rap: item.rap,
                                         ban_tron: item.ban_tron,
+                                        image: {
+                                            upsert: item.image?.map((item) => ({
+                                                where: {
+                                                    id: item.id ?? "",
+                                                },
+                                                update: {
+                                                    url: item.url,
+                                                },
+                                                create: {
+                                                    url: item.url,
+                                                },
+                                            })),
+                                        }
                                     },
                                     create: {
                                         title: item.title,
                                         description: item.description,
                                         price: item.price ?? 0,
-                                        packAncestralId: item.packAncestralId ?? -1,
+                                        packAncestralId: item.packAncestralId ?? "",
                                         ceremonyType: item.ceremonyType ?? -1,
                                         dateShowStart: item.dateShowStart,
                                         tone_rem: item.tone_rem,
@@ -433,6 +453,11 @@ export const showsRouter = createTRPCRouter({
                                         lung_ghe: item.lung_ghe,
                                         rap: item.rap,
                                         ban_tron: item.ban_tron,
+                                        image: {
+                                            create: item.image?.map((item) => ({
+                                                url: item.url
+                                            })),
+                                        }
                                     },
                                 })
                             ),

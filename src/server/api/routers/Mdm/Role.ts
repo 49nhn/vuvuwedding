@@ -107,7 +107,7 @@ export const roleRouter = createTRPCRouter({
                     name: input.name,
                     description: input.description,
                     permissions: {
-                        set: input.permissions?.map((id) => ({ id: id })) 
+                        connect: input.permissions?.map((id) => ({ id: id })) 
                     },
                 },
             });

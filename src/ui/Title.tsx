@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import React, { useMemo } from 'react'
 import { GlobalConfig } from '~/config/GlobalConfig';
 import { api } from '~/utils/api';
+import { Button } from "@nextui-org/button";
 
 const TitlePage = () => {
     const { data, isLoading, isError, isSuccess } = api.Auth.me.useQuery(undefined, GlobalConfig.tanstackOption);
@@ -17,7 +18,7 @@ const TitlePage = () => {
     const router = useRouter();
     const breadcrumb = useMemo(() => {
         const path = router.asPath.split('/').slice(1);
-        const breadcrumb = path.map((item, index) => {
+        return path.map((item, index) => {
             const link = path.slice(0, index + 1).join('/');
             return (
                 <span key={index} className='flex'>
@@ -27,8 +28,7 @@ const TitlePage = () => {
                     </Link>
                 </span>
             )
-        })
-        return breadcrumb;
+        });
     }, [router.asPath])
 
     return (
@@ -50,12 +50,15 @@ const TitlePage = () => {
                     <div className="lg:flex shadow-small rounded-medium ">
                         <Dropdown>
                             <DropdownTrigger className='data-[hover=true]:bg-default-100/80'>
-                                <UserIcon className='w-10 p-2'/>
+                                <Button isIconOnly className="bg-transparent">
+                                    <UserIcon className="p-2"  />
+                                </Button>
                             </DropdownTrigger>
-                            <DropdownMenu aria-label="Static Actions">
-                                <DropdownItem key="username" variant="bordered"> {data?.username} </DropdownItem>
-                                <DropdownItem key="profiles">
-                                    <Link href="/auth/profiles">
+                            <DropdownMenu aria-label="Static Actions" className={"hover: "}>
+                                <DropdownItem key="username" textValue={"username"}
+                                              variant="bordered"> {data?.username} </DropdownItem>
+                                <DropdownItem key="profiles" textValue={"profiles"}>
+                                    <Link href="/auth/profiles" className="flex">
                                         Profiles
                                     </Link>
                                 </DropdownItem>

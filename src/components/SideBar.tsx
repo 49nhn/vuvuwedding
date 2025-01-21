@@ -195,7 +195,7 @@ export const Sidebar = () => {
                                                 <Link className='flex items-center '
                                                       href={subItem.href}>
                                                     {item.icon}
-                                                    <span className="ms-1.5">{subItem.title}</span>
+                                            <span className="ms-1.5">{subItem.title}</span>
                                                 </Link>
                                             </ListboxItem>
                                         ))}

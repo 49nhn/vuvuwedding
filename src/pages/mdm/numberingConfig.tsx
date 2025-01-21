@@ -50,7 +50,7 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "prefix", "paddingZeroNumber", "suffix"
 
 const NumberingConfig: NextPageWithLayout = () => {
 
-    const [filter] = useState({});
+    const [filter] = useState({})
     const [sort, setSort] = useState<{ field: string, order?: "asc" | "desc" | undefined }[]>([]);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({});
     const { search, TopContent, headerColumns } = TopTable({
@@ -93,7 +93,7 @@ const NumberingConfig: NextPageWithLayout = () => {
         handleSubmit,
         watch,
         reset,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm<NumberingConfigOutput>({
         criteriaMode: "all",
     });
@@ -135,7 +135,7 @@ const NumberingConfig: NextPageWithLayout = () => {
             <Input label="Suffix" {...register("suffix")} value={watch("suffix") ?? ""}/>
             <div className={"flex items-end justify-end gap-x-3"}>
                 <Button color="default" className={"w-fit item"} onPress={() => onClose()}>Cancel</Button>
-                <Button color="primary" className={"w-fit item"} type="submit">Save</Button>
+                <Button color="primary" className={"w-fit item"} isLoading={isSubmitting} type="submit">Save</Button>
             </div>
         </form>,
     })

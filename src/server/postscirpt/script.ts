@@ -226,8 +226,7 @@ const permissions = [
 
 async function initAdmin() {
 
-    for  (let i = 0; i < permissions.length; i++) {
-        const permission = permissions[i]
+    for await (const permission of permissions) {
         const perm = await prisma.permission.findFirst({
             where: {
                 name: permission.name

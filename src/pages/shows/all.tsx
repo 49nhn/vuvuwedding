@@ -3,7 +3,7 @@ import React, { ReactElement, ReactNode, useCallback, useContext, useEffect, use
 import MainLayout, { AuthContext } from "~/layouts/MainLayout";
 import { api, ShowsInput, ShowsOutput, } from "~/utils/api";
 import { GlobalConfig } from "~/config/GlobalConfig";
-import { Accordion, AccordionItem, Card, CardBody, Input, Select, SelectItem, type SortDescriptor, Spacer, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { Accordion, AccordionItem, Card, CardBody, Image, Input, Select, SelectItem, type SortDescriptor, Spacer, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { TopTable } from "~/components/TopTable";
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { MyModal } from "~/components/Modal";
@@ -21,6 +21,8 @@ import { DateInput } from "@nextui-org/date-input";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import { getDay } from "~/utils/formatDate";
+import { UploadDropzone } from "~/utils/uploadthing";
+import { OurFileRouter } from "~/server/uploadthing";
 
 type FormType = ShowsInput & {
     createdBy: string | undefined,
@@ -163,7 +165,7 @@ const All: NextPageWithLayout = () => {
         watch,
         reset,
         setValue,
-        formState: { errors },
+        formState: { errors, isSubmitting, isDirty },
     } = useForm<FormType>({
         criteriaMode: "all",
         mode: "onBlur",
@@ -188,8 +190,8 @@ const All: NextPageWithLayout = () => {
         onClose()
     };
 
-    const RenderFormDecorations = useCallback(() => {
-        return countRender.decorations.map((_, index) =>
+    const RenderFormDecorations = useCallback(() =>
+        countRender.decorations.map((_, index) =>
             (
                 <Accordion key={index} isCompact>
                     <AccordionItem title={`${watch(`decorations.${index}.title`) ?? `Decoration  ${index}`} `}
@@ -226,7 +228,7 @@ const All: NextPageWithLayout = () => {
                                         selectedKeys={[`${watch(`decorations.${index}.packAncestralId`)}`]}
                                         items={packAncestral}
                                         onSelectionChange={(value) =>
-                                            setValue(`decorations.${index}.packAncestralId`, Array.from(value).map((item) => String(item))[0] )}
+                                            setValue(`decorations.${index}.packAncestralId`, Array.from(value).map((item) => String(item))[0])}
                                     >
                                         {item =>
                                             <SelectItem key={item.id} value={item.id}>
@@ -252,6 +254,7 @@ const All: NextPageWithLayout = () => {
                                     <Input label="Price"
                                            endContent={<span className="text-gray-500 flex text-xs">triệu vnd</span>}
                                            type="number"
+                                           inputMode={"numeric"}
                                            value={`${watch(`decorations.${index}.price`)}`}
                                            {...register(`decorations.${index}.price`, {
                                                valueAsNumber: true,
@@ -298,11 +301,53 @@ const All: NextPageWithLayout = () => {
                                 <Input label="Bàn tròn" {...register(`decorations.${index}.ban_tron`)}
                                        value={watch(`decorations.${index}.ban_tron`)}/>
                             </div>
+                            <h3 className="col-span-2 font-bold">
+                                Image
+                            </h3>
+                            <div className={"flex gap-2"}>
+                                <div>
+                                    {
+                                        watch(`decorations.${index}.image`) ?
+                                            watch(`decorations.${index}.image`).map((item, index) => (
+                                                <Image key={index} src={item.url} width={100} height={100}/>
+                                            )) : null
+                                    }
+                                </div>
+                                
+                                <UploadDropzone<keyof OurFileRouter>
+                                    endpoint="imageUploader"
+                                    onClientUploadComplete={(res) => {
+                                        // Do something with the response
+                                        console.log("Files: ", res);
+                                        alert("Upload Completed");
+                                    }}
+                                    appearance={{
+                                        button:
+                                            "ut-ready:bg-green-500 ut-uploading:cursor-not-allowed p-2 rounded" +
+                                            " bg-primary-500" +
+                                            " bg-none after:bg-orange-400",
+                                        container: "w-max rounded-md border-cyan-30 py-3",
+                                        allowedContent:
+                                            "flex h-8 flex-col items-center justify-center text-white",
+                                    }}
+                                    onUploadError={(error: Error) => {
+                                        alert(`ERROR! ${error.message}`);
+                                    }}
+                                    onUploadBegin={(name) => {
+                                        // Do something once upload begins
+                                        console.log("Uploading: ", name);
+                                    }}
+                                    onDrop={(acceptedFiles) => {
+                                        // Do something with the accepted files
+                                        console.log("Accepted files: ", acceptedFiles);
+                                        setValue(`decorations.${index}.image`,[])
+                                    }}
+                                />
+                            </div>
                         </div>
                     </AccordionItem>
                 </Accordion>
-            ));
-    }, [countRender.decorations])
+            )), [countRender.decorations])
 
     const RenderTabForm = useCallback((type: "photos" | "weddingPresents" | "makeups" | "weddingDresses" | "weddingFlowers" | "others") => {
         return countRender[type].map((item, index, array) => {
@@ -376,6 +421,7 @@ const All: NextPageWithLayout = () => {
                                 <Input label="Price"
                                        endContent={<span className="text-gray-500 flex text-xs">triệu vnd</span>}
                                        type="number"
+                                       inputMode={"numeric"}
                                        value={`${watch(`${type}.${index}.price`)}`}
                                        {...register(`${type}.${index}.price`, {
                                            valueAsNumber: true,
@@ -641,8 +687,9 @@ const All: NextPageWithLayout = () => {
             </div>
             <Spacer y={8}/>
             <div className={"flex items-end absolute bottom-2 right-3 justify-end gap-x-3"}>
-                <Button color="default" className={"w-fit item"} onPress={() => onClose()}>Cancel</Button>
-                <Button color="primary" className={"w-fit item"} type="submit">Save</Button>
+                <Button color="default" className={"w-fit item"} isLoading={isSubmitting}
+                        onPress={() => onClose()}>Cancel</Button>
+                <Button color="primary" className={"w-fit item"} isLoading={isSubmitting} type="submit">Save</Button>
             </div>
         </form>
         ,
@@ -658,7 +705,7 @@ const All: NextPageWithLayout = () => {
             order: sortDescriptor.direction === "ascending" ? "asc" : "desc"
         }]);
     }, [sortDescriptor]);
-    
+
     const renderCell = useCallback((item: ShowsOutput, columnKey: React.Key): ReactNode => {
         if (!item) return;
         const cellValue = item[columnKey as keyof ShowsOutput];

@@ -6,13 +6,15 @@
 import { NextPageWithLayout } from "~/pages/_app";
 import React, { ReactElement, useContext } from "react";
 import MainLayout, { AuthContext } from "~/layouts/MainLayout";
-import { Card, CardBody, CardFooter, Divider, Image, Input, Link } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, Divider, Image, Link } from "@nextui-org/react";
 import { UploadButton } from "~/utils/uploadthing";
 import { OurFileRouter } from "~/server/uploadthing";
 import { api, type CurrentUserInput } from "~/utils/api";
 import { GlobalConfig } from "~/config/GlobalConfig";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { Input } from "@nextui-org/input";
+import { Button } from "@nextui-org/button";
 
 const Profiles: NextPageWithLayout = () => {
     const currentUser = useContext(AuthContext);
@@ -20,9 +22,8 @@ const Profiles: NextPageWithLayout = () => {
     const {
         register,
         handleSubmit,
-        watch,
-        reset,
-        formState: { errors },
+
+        formState: { errors, isSubmitting, dirtyFields },
     } = useForm<CurrentUserInput>({
         criteriaMode: "all",
     });
@@ -39,10 +40,9 @@ const Profiles: NextPageWithLayout = () => {
     return (
         <div>
             <Card className="bg-opacity-35">
-
-                <CardBody className="grid-cols-2 ">
-                    <div className="flex justify-around">
-                        <div className="flex flex-col gap-y-2 items-center w-1/3">
+                <CardBody>
+                    <div className="grid md:grid-cols-3 grid-cols-1">
+                        <div className="flex col-span-1 flex-col gap-y-2 items-center">
                             <Image
                                 classNames={{ img: "rounded-full object-cover  " }}
                                 alt="nextui logo"
@@ -52,7 +52,6 @@ const Profiles: NextPageWithLayout = () => {
                                 loading={"eager"}
                                 src={currentUser?.avatar || "/images/avatar.jpg"}
                             />
-
                             <UploadButton<keyof OurFileRouter>
                                 endpoint="imageUploader"
                                 appearance={{
@@ -83,61 +82,71 @@ const Profiles: NextPageWithLayout = () => {
                                 }}
                             />
                         </div>
-                        <div className="flex flex-col border-l-1 p-2 w-2/3">
+                        <div className="flex col-span-2 flex-col border-l-1 p-2 ">
                             <form onSubmit={handleSubmit(onSubmit)}
-                                  className="flex flex-col w-full  md:flex-nowrap gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <Input
-                                        type="text"
-                                        fullWidth={true}
-                                        labelPlacement={"outside-left"}
-                                        label="Username"
-                                        id="username"
-                                        disabled={true}
-                                        value={currentUser?.username}
+                                  className="flex flex-col md:flex-nowrap gap-4">
+                                <Input
+                                    type="text"
+                                    labelPlacement={"outside-left"}
+                                    classNames={{ label: "w-1/4", mainWrapper: "w-full" }}
+                                    label="Username"
+                                    fullWidth={true}
+                                    id="username"
+                                    isReadOnly={true}
+                                    value={currentUser?.username}
 
-                                    />
-                                    <Input
-                                        {...register("fullName")}
-                                        type="text"
-                                        fullWidth={true}
-                                        labelPlacement={"outside-left"}
-                                        label="Fullname"
-                                        id="fullname"
-                                        defaultValue={currentUser?.fullName || ""}
-                                    />
-                                    <Input {
-                                               ...register("email")
-                                           }
-                                           type="email"
-                                           fullWidth={true}
-                                           labelPlacement={"outside-left"}
-                                           label="Email"
-                                           id="email"
-                                           defaultValue={currentUser?.email || ""}
-                                    />
-                                    <Input {
-                                               ...register("phone")
-                                           }
-                                           type="text"
-                                           fullWidth={true}
-                                           labelPlacement={"outside-left"}
-                                           label="Phone"
-                                           id="phone"
-                                           defaultValue={currentUser?.phone || ""}
-                                    />
-                                    <Input {
-                                               ...register("address")
-                                           }
-                                           type="text"
-                                           fullWidth={true}
-                                           labelPlacement={"outside-left"}
-                                           label="Address"
-                                           id="address"
-                                           defaultValue={currentUser?.address || ""}
-                                    />
+                                />
+                                <Input
+                                    {...register("fullName")}
+                                    type="text"
+                                    fullWidth={true}
+                                    classNames={{ label: "w-1/4", mainWrapper: "w-full" }}
+
+                                    labelPlacement={"outside-left"}
+                                    label="Fullname"
+                                    id="fullname"
+                                    defaultValue={currentUser?.fullName || ""}
+                                />
+                                <Input {
+                                           ...register("email")
+                                       }
+                                       type="email"
+                                       fullWidth={true}
+                                       classNames={{ label: "w-1/4", mainWrapper: "w-full" }}
+
+                                       labelPlacement={"outside-left"}
+                                       label="Email"
+                                       id="email"
+                                       defaultValue={currentUser?.email || ""}
+                                />
+                                <Input {
+                                           ...register("phone")
+                                       }
+                                       type="text"
+                                       fullWidth={true}
+                                       classNames={{ label: "w-1/4", mainWrapper: "w-full" }}
+
+                                       labelPlacement={"outside-left"}
+                                       label="Phone"
+                                       id="phone"
+                                       defaultValue={currentUser?.phone || ""}
+                                />
+                                <Input {
+                                           ...register("address")
+                                       }
+                                       type="text"
+                                       fullWidth={true}
+                                       classNames={{ label: "w-1/4", mainWrapper: "w-full" }}
+
+                                       labelPlacement={"outside-left"}
+                                       label="Address"
+                                       id="address"
+                                       defaultValue={currentUser?.address || ""}
+                                />
+                                <div className="flex justify-end ">
+                                    <Button type="submit" color="primary" isLoading={isSubmitting}
+                                            isDisabled={!dirtyFields.phone || dirtyFields.fullName||dirtyFields.address || dirtyFields.email }>Submit</Button>
                                 </div>
-                                <button type="submit" className="btn btn-primary">Submit</button>
                             </form>
                         </div>
                     </div>
